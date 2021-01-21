@@ -6,7 +6,7 @@ namespace PRG2_T04_Team5
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Testing");
         }
     }
 }
