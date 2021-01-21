@@ -4,7 +4,7 @@ using System.Text;
 
 namespace COVID_Monitoring_System
 {
-    abstract class Visitor:Person
+    class Visitor:Person
     {
         private string passportNo;
 

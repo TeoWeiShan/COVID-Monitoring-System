@@ -38,12 +38,12 @@ namespace COVID_Monitoring_System
 
         public void AddTravelEntry()
         {
-
+            throw new NotImplementedException();
         }
 
         public void AddSafeEntry()
         {
-
+            throw new NotImplementedException();
         }
 
         public abstract double CalculateSHNCharges();
