@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PRG2_T04_Team5
 {
-    class TraceTogetherToken
+    class COVID_Monitoring_System
     {
     }
 }

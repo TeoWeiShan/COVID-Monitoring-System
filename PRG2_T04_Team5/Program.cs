@@ -1,12 +1,13 @@
 ﻿using System;
 
-namespace PRG2_T04_Team5
+namespace COVID_Monitoring_System
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            
+            
         }
     }
 }
