@@ -65,7 +65,7 @@ namespace COVID_Monitoring_System
 
         public void AssignSHNFacility(SHNFacility SHNStay)
         {
-            
+            throw new NotImplementedException();
         }
 
         public void CalculateSHNDuration()
@@ -74,6 +74,7 @@ namespace COVID_Monitoring_System
             {
                 
             }
+            throw new NotImplementedException();
         }
 
         public override string ToString()

@@ -94,12 +94,10 @@ namespace COVID_Monitoring_System
             bool avail = true;
             if (FacilityVacancy == 0)
             {
-                return avail = false;
-            }
-            else
-            {
+                avail = false;
                 return avail;
             }
+            return avail;
             
         }
 
