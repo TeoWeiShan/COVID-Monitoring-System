@@ -36,7 +36,7 @@ namespace COVID_Monitoring_System
 
                 if (option == "1")
                 {
-                    LoadPersonBusinessData(personList);
+                    LoadPersonBusinessData(personList,businessList);
                     //***Invalid input will pop up***
                 }
                 if (option == "2")
@@ -55,7 +55,7 @@ namespace COVID_Monitoring_System
 
             }
 
-            static void LoadPersonBusinessData(List<Person> personList)
+            static void LoadPersonBusinessData(List<Person> personList, List<BusinessLocation> businessList)
             {
                 string[] csvLinesPerson = File.ReadAllLines("Person.csv");
                 for (int i = 1; i < csvLinesPerson.Length; i++)
@@ -74,10 +74,21 @@ namespace COVID_Monitoring_System
                     }
 
                 }
+                string[] csvLinesBusiness = File.ReadAllLines("BusinessLocation.csv");
+                for (int i = 1; i < csvLinesBusiness.Length; i++)
+                {
+                    string[] line = csvLinesBusiness[i].Split(',');
+                    BusinessLocation b = new BusinessLocation(line[0], line[1], Convert.ToInt32(line[2]));
+                    businessList.Add(b);
+                }
                 Console.WriteLine("All data has been loaded.");
                 foreach (Person p in personList)
                 {
                     Console.WriteLine(p.ToString());
+                }
+                foreach (BusinessLocation b in businessList)
+                {
+                    Console.WriteLine(b.ToString());
                 }
 
             }
