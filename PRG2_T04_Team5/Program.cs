@@ -15,20 +15,32 @@ namespace COVID_Monitoring_System
             Console.WriteLine("Welcome to COVID Monitoring System");
 
             List<SHNFacility> SHNFacilityList = new List<SHNFacility>();
-            List<Person> personList = new List<Person> ();
+            List<Person> personList = new List<Person>();
             List<BusinessLocation> businessList = new List<BusinessLocation>();
 
-            
 
-            
+
+
             while (true)
             {
-                
+
                 Console.WriteLine("\n========================================\n" +
+                    "\n===General===\n" +
                     "1) Load Person and Business Location Data\n" +
                     "2) Load SHN Facility Data\n" +
                     "3) List all Visitors\n" +
-                    "4) List Person Details");
+                    "4) List Person Details\n" +
+                    "\n===SafeEntry/TraceTogether===\n" +
+                    "5) Assign/Replace TraceTogether Token\n" +
+                    "6) List all Business Locations\n" +
+                    "7) Edit Business Location Capacity\n" +
+                    "8) SafeEntry Check-in\n" +
+                    "9) SafeEntry Check-out\n" +
+                    "\n===TravelEntry===\n" +
+                    "10) List all SHN Facilities\n" +
+                    "11) Create Visitor\n" +
+                    "12) Create TravelEntry Record\n" +
+                    "13) Calculate SHN Charges\n");
                 Console.WriteLine("========================================");
                 Console.Write("Please Enter An Option: ");
                 string option = Console.ReadLine();
@@ -36,7 +48,7 @@ namespace COVID_Monitoring_System
 
                 if (option == "1")
                 {
-                    LoadPersonBusinessData(personList,businessList);
+                    LoadPersonBusinessData(personList, businessList);
                     //***Invalid input will pop up***
                 }
                 if (option == "2")
@@ -52,13 +64,21 @@ namespace COVID_Monitoring_System
                 {
                     ListPersonDetails(personList);
                 }
+                if (option == "10")
+                {
+                    ListAllSHNFacilities(SHNFacilityList);
+                }
+                if (option == "11")
+                {
+                    CreateVisitor(personList);
+                }
                 else
                 {
                     Console.WriteLine("Invalid input, please try again.");
                 }
 
             }
-
+            //===General===
             static void LoadPersonBusinessData(List<Person> personList, List<BusinessLocation> businessList)
             {
                 string[] csvLinesPerson = File.ReadAllLines("Person.csv");
@@ -110,8 +130,10 @@ namespace COVID_Monitoring_System
                         readTask.Wait();
                         string data = readTask.Result;
                         SHNFacilityList = JsonConvert.DeserializeObject<List<SHNFacility>>(data);
-                        
+
                     }
+
+                    ListAllSHNFacilities(SHNFacilityList);
 
                 }
 
@@ -130,20 +152,20 @@ namespace COVID_Monitoring_System
                         {
                             Console.WriteLine(p.ToString());
                         }
-                        
+
                     }
                 }
-                
+
             }
             static void ListPersonDetails(List<Person> personList)
             {
                 Console.Write("Enter person name: ");
-                string name  = Console.ReadLine();
+                string name = Console.ReadLine();
                 bool found = false;
                 foreach (Person p in personList)
                 {
-                    
-                    if(p.Name == name)
+
+                    if (p.Name == name)
                     {
                         Console.WriteLine(p);
                         Console.WriteLine("Found");
@@ -155,7 +177,29 @@ namespace COVID_Monitoring_System
 
 
             }
+            //===SafeEntry/TraceTogether===
 
+
+            //===TravelEntry===
+            static void ListAllSHNFacilities(List<SHNFacility> SHNFacilityList)
+            {
+                foreach (SHNFacility f in SHNFacilityList)
+                {
+                    Console.WriteLine(f);
+                }
+            }
+
+            static void CreateVisitor(List<Person> personList)
+            {
+                Console.Write("Enter visitor name: ");
+                string name = Console.ReadLine();
+                Console.Write("Enter visitor passport number: ");
+                string passportNo = Console.ReadLine();
+                Console.Write("Enter visitor nationality: ");
+                string nationality = Console.ReadLine();
+                Person p = new Visitor(name, passportNo, nationality);
+                personList.Add(p);
+            }
 
         }
     }
