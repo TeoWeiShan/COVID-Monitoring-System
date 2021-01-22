@@ -48,6 +48,10 @@ namespace COVID_Monitoring_System
                 {
                     ListVisitors(personList);
                 }
+                if (option == "4")
+                {
+                    ListPersonDetails(personList);
+                }
                 else
                 {
                     Console.WriteLine("Invalid input, please try again.");
@@ -131,7 +135,26 @@ namespace COVID_Monitoring_System
                 }
                 
             }
+            static void ListPersonDetails(List<Person> personList)
+            {
+                Console.Write("Enter person name: ");
+                string name  = Console.ReadLine();
+                bool found = false;
+                foreach (Person p in personList)
+                {
+                    
+                    if(p.Name == name)
+                    {
+                        Console.WriteLine(p);
+                        Console.WriteLine("Found");
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) Console.WriteLine("Person is not found.");
 
+
+            }
 
 
         }
