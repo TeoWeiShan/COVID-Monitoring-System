@@ -72,6 +72,12 @@ namespace COVID_Monitoring_System
                 {
                     CreateVisitor(personList);
                 }
+                if (option == "12")
+                {
+                    CreateTravelEntryRecord(personList, SHNFacilityList);
+                }
+
+                
                 else
                 {
                     Console.WriteLine("Invalid input, please try again.");
@@ -200,6 +206,44 @@ namespace COVID_Monitoring_System
                 Person p = new Visitor(name, passportNo, nationality);
                 personList.Add(p);
             }
+
+            static void CreateTravelEntryRecord(List<Person> personList, List<SHNFacility> SHNFacilityList)
+            {
+                Console.Write("Enter visitor name: ");
+                string name = Console.ReadLine();
+                bool found = false;
+                foreach (Person p in personList)
+                {
+
+                    if (p.Name == name)
+                    {
+                        found = true;
+                        Console.WriteLine("Enter last country of embarkation: ");
+                        string lastCountry = Console.ReadLine();
+                        Console.WriteLine("Enter entry mode: ");
+                        string entryMode = Console.ReadLine();
+                        Console.WriteLine("Enter entry date: ");
+                        DateTime entryDate = Convert.ToDateTime(Console.ReadLine());
+                        TravelEntry e = new TravelEntry(lastCountry, entryMode, entryDate);
+                        double cost = p.CalculateSHNCharges();
+                        //LoadSHNFacilityData(SHNFacilityList);
+                        //Console.WriteLine("Enter ")
+
+
+
+
+                        p.AddTravelEntry(e);
+
+                        
+
+                        break;
+                    }
+                }
+                if (!found) Console.WriteLine("Person is not found.");
+
+            }
+
+            
 
         }
     }
