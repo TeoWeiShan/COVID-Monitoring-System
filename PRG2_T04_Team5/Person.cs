@@ -14,36 +14,38 @@ namespace COVID_Monitoring_System
             set { name = value; }
         }
 
-        private List<SafeEntry> safeEntry;
+        private List<SafeEntry> safeEntryList;
 
-        public List<SafeEntry> SafeEntry
+        public List<SafeEntry> SafeEntryList
         {
-            get { return safeEntry; }
-            set { safeEntry = value; }
+            get { return safeEntryList; }
+            set { safeEntryList = value; }
         }
 
-        private List<TravelEntry> travelEntry;
+        private List<TravelEntry> travelEntryList;
 
-        public List<TravelEntry> TravelEntry
+        public List<TravelEntry> TravelEntryList
         {
-            get { return travelEntry; }
-            set { travelEntry = value; }
+            get { return travelEntryList; }
+            set { travelEntryList = value; }
         }
 
-        public Person() { }
+        public Person() { TravelEntryList = new List<TravelEntry>(); SafeEntryList = new List<SafeEntry>(); }
         public Person(string name)
         {
             Name = name;
+            TravelEntryList = new List<TravelEntry>();
+            SafeEntryList = new List<SafeEntry>();
         }
 
-        public void AddTravelEntry()
+        public void AddTravelEntry(TravelEntry entry)
         {
-            throw new NotImplementedException();
+            TravelEntryList.Add(entry);
         }
 
-        public void AddSafeEntry()
+        public void AddSafeEntry(SafeEntry entry)
         {
-            throw new NotImplementedException();
+            SafeEntryList.Add(entry);
         }
 
         public abstract double CalculateSHNCharges();
