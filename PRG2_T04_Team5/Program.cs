@@ -46,6 +46,7 @@ namespace COVID_Monitoring_System
                 string option = Console.ReadLine();
                 Console.WriteLine("========================================\n");
 
+                //===General===
                 if (option == "1")
                 {
                     LoadPersonBusinessData(personList, businessList);
@@ -64,6 +65,11 @@ namespace COVID_Monitoring_System
                 {
                     ListPersonDetails(personList);
                 }
+
+                //===SafeEntry/TraceTogether===
+
+
+                //===TravelEntry===
                 if (option == "10")
                 {
                     ListAllSHNFacilities(SHNFacilityList);
@@ -76,8 +82,12 @@ namespace COVID_Monitoring_System
                 {
                     CreateTravelEntryRecord(personList, SHNFacilityList);
                 }
+                if (option == "13")
+                {
+                    CalculateSHNCharges(personList);
+                }
 
-                
+
                 else
                 {
                     Console.WriteLine("Invalid input, please try again.");
@@ -209,7 +219,7 @@ namespace COVID_Monitoring_System
 
             static void CreateTravelEntryRecord(List<Person> personList, List<SHNFacility> SHNFacilityList)
             {
-                Console.Write("Enter visitor name: ");
+                Console.Write("Enter person name: ");
                 string name = Console.ReadLine();
                 bool found = false;
                 foreach (Person p in personList)
@@ -243,7 +253,24 @@ namespace COVID_Monitoring_System
 
             }
 
-            
+            static void CalculateSHNCharges(List<Person> personList)
+            {
+                Console.Write("Enter person name: ");
+                string name = Console.ReadLine();
+
+                bool found = false;
+                foreach (Person p in personList)
+                {
+
+                    if (p.Name == name /*&& p.TravelEntryList.SHNEndDate != DateTime.Now*/) 
+                    {
+                        Console.WriteLine(p.TravelEntryList);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) Console.WriteLine("Person is not found.");
+            }
 
         }
     }
