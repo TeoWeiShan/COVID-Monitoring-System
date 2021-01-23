@@ -50,8 +50,8 @@ namespace COVID_Monitoring_System
 
         public double DistFromLandCheckpoint
         {
-            get { return distFromSeaCheckpoint; }
-            set { distFromSeaCheckpoint = value; }
+            get { return distFromLandCheckpoint; }
+            set { distFromLandCheckpoint = value; }
 
         }
 
