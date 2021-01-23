@@ -292,7 +292,7 @@ namespace COVID_Monitoring_System
                             {
                                 if (b.MaximumCapacity == 0 /* biz cap not full after add 1 person*/ )
                                 {
-                                    Console.WriteLine("Location full.Please try again later.");
+                                    Console.WriteLine("Location full. Please try again later.");
                                 }
                                 else 
                                 {
