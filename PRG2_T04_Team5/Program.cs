@@ -48,63 +48,61 @@ namespace COVID_Monitoring_System
                 if (option == "1")
                 {
                     LoadPersonBusinessData(personList, businessList);
-                    //***Invalid input will pop up***
                 }
-                if (option == "2")
+                else if (option == "2")
                 {
                     LoadSHNFacilityData(SHNFacilityList);
-                    //***Invalid input will pop up***
                 }
-                if (option == "3")
+                else if (option == "3")
                 {
                     ListVisitors(personList);
                 }
-                if (option == "4")
+                else if (option == "4")
                 {
                     ListPersonDetails(personList);
                 }
 
                 //===SafeEntry/TraceTogether===
-                if (option == "5")
+                else if (option == "5")
                 {
                     TraceTogetherToken(personList);
                 }
 
-                if (option == "6")
+                else if (option == "6")
                 {
                     ListBizLocations(businessList);
                 }
 
-                if (option == "7")
+                else if (option == "7")
                 {
                     EditBizLocationCap(businessList);
                 }
 
-                if (option == "8")
+                else if (option == "8")
                 {
                     SafeEntryCheckIn(personList, businessList);
                 }
 
-                if (option == "9")
+                else if (option == "9")
                 {
                     SafeEntryCheckOut(personList);
                 }
 
 
                 //===TravelEntry===
-                if (option == "10")
+                else if (option == "10")
                 {
                     ListAllSHNFacilities(SHNFacilityList);
                 }
-                if (option == "11")
+                else if (option == "11")
                 {
                     CreateVisitor(personList);
                 }
-                if (option == "12")
+                else if (option == "12")
                 {
                     CreateTravelEntryRecord(personList, SHNFacilityList);
                 }
-                if (option == "13")
+                else if (option == "13")
                 {
                     CalculateSHNCharges(personList);
                 }
@@ -126,12 +124,29 @@ namespace COVID_Monitoring_System
                     if (line[0] == "visitor")
                     {
                         Person p = new Visitor(line[1], line[4], line[5]);
+
+                        if (line[9] != "" && line[10] != "" && line[11] != "")
+                        {
+                            TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]));
+                            p.AddTravelEntry(te);
+                        }
+
                         personList.Add(p);
+
+
+
+
+
 
                     }
                     if (line[0] == "resident")
                     {
                         Person p = new Resident(line[1], line[2], Convert.ToDateTime(line[3]));
+                        if (line[9] != "" && line[10] != "" && line[11] != "")
+                        {
+                            TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]));
+                            p.AddTravelEntry(te);
+                        }
                         personList.Add(p);
                     }
 
@@ -147,6 +162,7 @@ namespace COVID_Monitoring_System
                 foreach (Person p in personList)
                 {
                     Console.WriteLine(p.ToString());
+
                 }
                 foreach (BusinessLocation b in businessList)
                 {
@@ -204,8 +220,27 @@ namespace COVID_Monitoring_System
 
                     if (p.Name == name)
                     {
+                        Console.WriteLine("Person Found");
                         Console.WriteLine(p);
-                        Console.WriteLine("Found");
+                        if (p.TravelEntryList.Count == 0)
+                        {
+                            Console.WriteLine("No Travel Entry Details");
+
+                        }
+                        else
+                        {
+                            Console.WriteLine(p.TravelEntryList[p.TravelEntryList.Count - 1]);
+                            /*List<TravelEntry> TravelList = p.TravelEntryList;
+                            string travelDetails = "";
+                            foreach (TravelEntry entry in TravelList)
+                            {
+                                travelDetails += entry.EntryMode + "\n";
+                            }*/
+                        }
+
+
+
+
                         found = true;
                         break;
                     }
@@ -293,18 +328,9 @@ namespace COVID_Monitoring_System
 
             static void SafeEntryCheckOut(List<Person> personList)
             {
-                Console.WriteLine("Enter your name: ");
-                string name = Console.ReadLine();
-                foreach (Person p in personList)
-                {
-                    if (p.Name == name)
-                    {
-                        Console.WriteLine(p.Name);
-                    }
-                   // PerformCheckOut();
-                }
+                Console.WriteLine("bye");
             }
-               
+
 
             //===TravelEntry===
             static void ListAllSHNFacilities(List<SHNFacility> SHNFacilityList)
@@ -333,29 +359,38 @@ namespace COVID_Monitoring_System
                     Console.Write("Enter person name: ");
                     string name = Console.ReadLine();
                     bool found = false;
-                    foreach (Person p in personList)
+                foreach (Person p in personList)
+                {
+                    if (p.Name == name)
                     {
-                        if (p.Name == name)
+                        found = true;
+                        Console.WriteLine("Enter last country of embarkation: ");
+                        string lastCountry = Console.ReadLine();
+                        Console.WriteLine("Enter entry mode: ");
+                        string entryMode = Console.ReadLine();
+                        Console.WriteLine("Enter entry date: ");
+                        DateTime entryDate = Convert.ToDateTime(Console.ReadLine());
+                        TravelEntry e = new TravelEntry(lastCountry, entryMode, entryDate);
+                        e.CalculateSHNDuration();
+                        Console.WriteLine(e.SHNEndDate);
+                        if (e.SHNEndDate == e.EntryDate.AddDays(14))
                         {
-                            found = true;
-                            Console.WriteLine("Enter last country of embarkation: ");
-                            string lastCountry = Console.ReadLine();
-                            Console.WriteLine("Enter entry mode: ");
-                            string entryMode = Console.ReadLine();
-                            Console.WriteLine("Enter entry date: ");
-                            DateTime entryDate = Convert.ToDateTime(Console.ReadLine());
-                            TravelEntry e = new TravelEntry(lastCountry, entryMode, entryDate);
-                            double cost = p.CalculateSHNCharges();
-                            //LoadSHNFacilityData(SHNFacilityList);
-                            //Console.WriteLine("Enter ")
+                            Console.WriteLine("Loading SHN Facilities. Please Wait.");
+                            LoadSHNFacilityData(SHNFacilityList);
+                            Console.Write("Enter SHN Facility Name: ");
+                            string fName = Console.ReadLine();
+                            //e.AssignSHNFacility();
 
-                            p.AddTravelEntry(e);
-
-                            break;
+                            
+                        }
+                        p.AddTravelEntry(e);
+                        Console.WriteLine("Travel Entry Record Created.");
+                        break;
                         }
                     }
-                    if (!found) Console.WriteLine("Person is not found.");
-                }
+                if (!found) Console.WriteLine("Person is not found.");
+
+            }
 
             static void CalculateSHNCharges(List<Person> personList)
             {
@@ -366,15 +401,14 @@ namespace COVID_Monitoring_System
                     foreach (Person p in personList)
                     {
 
-                        if (p.Name == name /*&& p.TravelEntryList.SHNEndDate != DateTime.Now*/)
+                        if (p.Name == name /*&& p.TravelEntryList.SHNEndDate != DateTime.Now*/) 
                         {
                             Console.WriteLine(p.TravelEntryList);
                             found = true;
                             break;
                         }
                     }
-                    if (!found) Console.WriteLine("Person is not found.");
-                
+                if (!found) Console.WriteLine("Person is not found.");
             }
         }
     }
