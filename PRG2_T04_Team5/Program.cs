@@ -293,9 +293,18 @@ namespace COVID_Monitoring_System
 
             static void SafeEntryCheckOut(List<Person> personList)
             {
-                Console.WriteLine("bye");
+                Console.WriteLine("Enter your name: ");
+                string name = Console.ReadLine();
+                foreach (Person p in personList)
+                {
+                    if (p.Name == name)
+                    {
+                        Console.WriteLine(p.Name);
+                    }
+                   // PerformCheckOut();
+                }
             }
-
+               
 
             //===TravelEntry===
             static void ListAllSHNFacilities(List<SHNFacility> SHNFacilityList)
