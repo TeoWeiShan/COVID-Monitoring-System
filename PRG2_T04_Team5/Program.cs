@@ -104,12 +104,29 @@ namespace COVID_Monitoring_System
                     if (line[0] == "visitor")
                     {
                         Person p = new Visitor(line[1], line[4], line[5]);
+
+                        if (line[9] != "" && line[10] != "" && line[11] != "")
+                        {
+                            TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]));
+                            p.AddTravelEntry(te);
+                        }
+
                         personList.Add(p);
+
+
+
+
+
 
                     }
                     if (line[0] == "resident")
                     {
                         Person p = new Resident(line[1], line[2], Convert.ToDateTime(line[3]));
+                        if (line[9] != "" && line[10] != "" && line[11] != "")
+                        {
+                            TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]));
+                            p.AddTravelEntry(te);
+                        }
                         personList.Add(p);
                     }
 
@@ -125,6 +142,7 @@ namespace COVID_Monitoring_System
                 foreach (Person p in personList)
                 {
                     Console.WriteLine(p.ToString());
+
                 }
                 foreach (BusinessLocation b in businessList)
                 {
@@ -183,8 +201,27 @@ namespace COVID_Monitoring_System
 
                     if (p.Name == name)
                     {
+                        Console.WriteLine("Person Found");
                         Console.WriteLine(p);
-                        Console.WriteLine("Found");
+                        if (p.TravelEntryList.Count == 0)
+                        {
+                            Console.WriteLine("No Travel Entry Details");
+
+                        }
+                        else
+                        {
+                            Console.WriteLine(p.TravelEntryList[0]);
+                            /*List<TravelEntry> TravelList = p.TravelEntryList;
+                            string travelDetails = "";
+                            foreach (TravelEntry entry in TravelList)
+                            {
+                                travelDetails += entry.EntryMode + "\n";
+                            }*/
+                        }
+
+
+
+
                         found = true;
                         break;
                     }
@@ -244,7 +281,7 @@ namespace COVID_Monitoring_System
 
                         p.AddTravelEntry(e);
 
-                        
+
 
                         break;
                     }
@@ -262,7 +299,7 @@ namespace COVID_Monitoring_System
                 foreach (Person p in personList)
                 {
 
-                    if (p.Name == name /*&& p.TravelEntryList.SHNEndDate != DateTime.Now*/) 
+                    if (p.Name == name /*&& p.TravelEntryList.SHNEndDate != DateTime.Now*/)
                     {
                         Console.WriteLine(p.TravelEntryList);
                         found = true;
