@@ -260,17 +260,18 @@ namespace COVID_Monitoring_System
             {
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
+                bool found = false;
                 foreach (Resident r in personList)
                 {
-                    if (r.Name == name)
+                    if (r.Name == name) //create & assign Token object if no token. replace if >6 months
                     {
-                        Console.WriteLine("");
+                        found = true;
+                        //TraceTogetherToken t = new TraceTogetherToken(serialNo, collectionLocation, expiryDate);
+                        //r.AddTraceTogetherToken(t);
+                        break;
                     }
 
-                    else
-                    {
-                        Console.Write("Invalid name.");
-                    }
+                    else if (!found) Console.WriteLine("Business not found. Please try again.");
                 }
             }
 
@@ -310,10 +311,11 @@ namespace COVID_Monitoring_System
                 bool found = false;
                 foreach (Person p in personList)
                 {
+                    
                     if (p.Name == name)
                     {
                         found = true;
-                        Console.WriteLine(p.Name);
+                        //Console.WriteLine(p.Name);
                         foreach (BusinessLocation b in businessList)
                         {
                             Console.WriteLine(b);
@@ -325,7 +327,7 @@ namespace COVID_Monitoring_System
                         {
                            if (b.BusinessName == location)
                             {
-                                if (b.MaximumCapacity == 0 /* biz cap not full after add 1 person*/ )
+                                if (b.MaximumCapacity == 0)
                                 {
                                     Console.WriteLine("Location full. Please try again later.");
                                 }
@@ -344,7 +346,7 @@ namespace COVID_Monitoring_System
 
             static void SafeEntryCheckOut(List<Person> personList)
             {
-                Console.WriteLine("bye");
+                Console.WriteLine("");
             }
 
 
