@@ -72,14 +72,25 @@ namespace COVID_Monitoring_System
         {
             if (LastCountryOfEmbarkation == "New Zealand" || LastCountryOfEmbarkation == "Vietnam")
             {
-                
+                int SHNDay = 0;
             }
+            if (LastCountryOfEmbarkation == "Macao SAR")
+            {
+                int SHNDay = 7;
+            }
+            else
+            {
+                int SHNDay = 14;
+            }
+
+
+
             throw new NotImplementedException();
         }
 
         public override string ToString()
         {
-            return "Last Country of Embarkation" + LastCountryOfEmbarkation + "Entry Mode" + EntryMode + "Entry Date" + EntryDate + "SHNEndDate" + SHNEndDate + "SHN Stay" + (SHNStay) ;
+            return "Last Country of Embarkation: " + LastCountryOfEmbarkation + "\tEntry Mode: " + EntryMode + "\tEntry Date: " + EntryDate ;
         }
     }
 }

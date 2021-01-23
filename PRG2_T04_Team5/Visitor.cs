@@ -32,11 +32,12 @@ namespace COVID_Monitoring_System
         public override double CalculateSHNCharges()
         {
             throw new NotImplementedException();
+
         }
 
         public override string ToString()
         {
-            return "Name " + Name + " Passport No" + PassportNo + " Nationality " + Nationality;
+            return "Name: " + Name + "\tPassport No: " + PassportNo + "\tNationality: " + Nationality;
         }
 
 
