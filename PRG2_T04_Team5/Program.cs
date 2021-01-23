@@ -19,8 +19,6 @@ namespace COVID_Monitoring_System
             List<BusinessLocation> businessList = new List<BusinessLocation>();
 
 
-
-
             while (true)
             {
 
@@ -67,6 +65,30 @@ namespace COVID_Monitoring_System
                 }
 
                 //===SafeEntry/TraceTogether===
+                if (option == "5")
+                {
+                    TraceTogetherToken(personList);
+                }
+
+                if (option == "6")
+                {
+                    ListBizLocations(businessList);
+                }
+
+                if (option == "7")
+                {
+                    EditBizLocationCap(businessList);
+                }
+
+                if (option == "8")
+                {
+                    SafeEntryCheckIn(personList, businessList);
+                }
+
+                if (option == "9")
+                {
+                    SafeEntryCheckOut(personList);
+                }
 
 
                 //===TravelEntry===
@@ -168,7 +190,6 @@ namespace COVID_Monitoring_System
                         {
                             Console.WriteLine(p.ToString());
                         }
-
                     }
                 }
 
@@ -194,6 +215,86 @@ namespace COVID_Monitoring_System
 
             }
             //===SafeEntry/TraceTogether===
+            static void TraceTogetherToken(List<Person> personList)
+            {
+                Console.WriteLine("Enter your name: ");
+                string name = Console.ReadLine();
+                foreach (Resident r in personList)
+                {
+                    if (r.Name == name)
+                    {
+                        Console.WriteLine("");
+                    }
+
+                    else
+                    {
+                        Console.Write("Invalid name.");
+                    }
+                }
+            }
+
+            static void ListBizLocations(List<BusinessLocation> businessList)
+            {
+                foreach (BusinessLocation b in businessList)
+                {
+                    Console.WriteLine(b);
+                }
+            }
+
+            static void EditBizLocationCap(List<BusinessLocation> businessList)
+            {
+                Console.WriteLine("Enter business name: ");
+                string bizname = Console.ReadLine();
+                bool found = false;
+                foreach (BusinessLocation b in businessList)
+                {
+
+                    if (b.BusinessName == bizname)
+                    {
+                        found = true;
+                        Console.WriteLine("Enter the new max capacity: ");
+                        int newmaxcap = Convert.ToInt32(Console.ReadLine());
+                        // missing override data code
+                    }
+
+                    else
+                    {
+                        found = false;
+                        Console.WriteLine("Invalid input. Please try again.");
+                    }
+                }
+
+            }
+
+            static void SafeEntryCheckIn(List<Person> personList, List<BusinessLocation> businessList)
+            {
+                Console.WriteLine("Enter your name: ");
+                string name = Console.ReadLine();
+                foreach (Person p in personList)
+                {
+                    if (p.Name == name)
+                    {
+                        Console.WriteLine(p.Name);
+                        foreach (BusinessLocation b in businessList)
+                        {
+                            Console.WriteLine(b);
+                        }
+                        Console.WriteLine("Select business Location: ");
+                        string bizlocation = Console.ReadLine();
+                    }
+
+                     else
+                        {
+                            Console.Write("Invalid name.");
+                        }
+                            
+                }
+            }
+
+            static void SafeEntryCheckOut(List<Person> personList)
+            {
+                Console.WriteLine("bye");
+            }
 
 
             //===TravelEntry===
@@ -204,6 +305,7 @@ namespace COVID_Monitoring_System
                     Console.WriteLine(f);
                 }
             }
+
 
             static void CreateVisitor(List<Person> personList)
             {
@@ -218,60 +320,53 @@ namespace COVID_Monitoring_System
             }
 
             static void CreateTravelEntryRecord(List<Person> personList, List<SHNFacility> SHNFacilityList)
-            {
-                Console.Write("Enter person name: ");
-                string name = Console.ReadLine();
-                bool found = false;
-                foreach (Person p in personList)
                 {
-
-                    if (p.Name == name)
+                    Console.Write("Enter person name: ");
+                    string name = Console.ReadLine();
+                    bool found = false;
+                    foreach (Person p in personList)
                     {
-                        found = true;
-                        Console.WriteLine("Enter last country of embarkation: ");
-                        string lastCountry = Console.ReadLine();
-                        Console.WriteLine("Enter entry mode: ");
-                        string entryMode = Console.ReadLine();
-                        Console.WriteLine("Enter entry date: ");
-                        DateTime entryDate = Convert.ToDateTime(Console.ReadLine());
-                        TravelEntry e = new TravelEntry(lastCountry, entryMode, entryDate);
-                        double cost = p.CalculateSHNCharges();
-                        //LoadSHNFacilityData(SHNFacilityList);
-                        //Console.WriteLine("Enter ")
+                        if (p.Name == name)
+                        {
+                            found = true;
+                            Console.WriteLine("Enter last country of embarkation: ");
+                            string lastCountry = Console.ReadLine();
+                            Console.WriteLine("Enter entry mode: ");
+                            string entryMode = Console.ReadLine();
+                            Console.WriteLine("Enter entry date: ");
+                            DateTime entryDate = Convert.ToDateTime(Console.ReadLine());
+                            TravelEntry e = new TravelEntry(lastCountry, entryMode, entryDate);
+                            double cost = p.CalculateSHNCharges();
+                            //LoadSHNFacilityData(SHNFacilityList);
+                            //Console.WriteLine("Enter ")
 
+                            p.AddTravelEntry(e);
 
-
-
-                        p.AddTravelEntry(e);
-
-                        
-
-                        break;
+                            break;
+                        }
                     }
+                    if (!found) Console.WriteLine("Person is not found.");
                 }
-                if (!found) Console.WriteLine("Person is not found.");
-
-            }
 
             static void CalculateSHNCharges(List<Person> personList)
             {
-                Console.Write("Enter person name: ");
-                string name = Console.ReadLine();
+                    Console.Write("Enter person name: ");
+                    string name = Console.ReadLine();
 
-                bool found = false;
-                foreach (Person p in personList)
-                {
-
-                    if (p.Name == name /*&& p.TravelEntryList.SHNEndDate != DateTime.Now*/) 
+                    bool found = false;
+                    foreach (Person p in personList)
                     {
-                        Console.WriteLine(p.TravelEntryList);
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) Console.WriteLine("Person is not found.");
-            }
 
+                        if (p.Name == name /*&& p.TravelEntryList.SHNEndDate != DateTime.Now*/)
+                        {
+                            Console.WriteLine(p.TravelEntryList);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) Console.WriteLine("Person is not found.");
+                
+            }
         }
     }
 }
