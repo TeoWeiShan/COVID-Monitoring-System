@@ -263,7 +263,7 @@ namespace COVID_Monitoring_System
                         b.MaximumCapacity = newmaxcap;
                         break;
                     }
-                    if (!found) Console.WriteLine("Business not found. Please try again.");
+                    else if (!found) Console.WriteLine("Business not found. Please try again.");
                 }
 
             }
@@ -272,24 +272,38 @@ namespace COVID_Monitoring_System
             {
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
+                bool found = false;
                 foreach (Person p in personList)
                 {
                     if (p.Name == name)
                     {
+                        found = true;
                         Console.WriteLine(p.Name);
                         foreach (BusinessLocation b in businessList)
                         {
                             Console.WriteLine(b);
                         }
-                        Console.WriteLine("Select business Location: ");
-                        string bizlocation = Console.ReadLine();
-                    }
-
-                     else
+                        DateTime checkin = DateTime.Now;
+                        Console.WriteLine("Select business location: ");
+                        string location = Console.ReadLine();
+                        foreach (BusinessLocation b in businessList)
                         {
-                            Console.Write("Invalid name.");
+                           if (b.BusinessName == location)
+                            {
+                                if (b.MaximumCapacity == 0 /* biz cap not full after add 1 person*/ )
+                                {
+                                    Console.WriteLine("Location full.Please try again later.");
+                                }
+                                else 
+                                {
+                                    SafeEntry e = new SafeEntry(checkin, b);
+                                    p.AddSafeEntry(e);
+                                    break;
+                                }    
+                            }
                         }
-                            
+                    }
+                    else if (!found) Console.WriteLine("Name not found. Please try again.");
                 }
             }
 
