@@ -30,7 +30,7 @@ namespace COVID_Monitoring_System
             set { location = value; }
         }
 
-        public SafeEntry() { }
+        public SafeEntry(DateTime checkin) { }
 
         public SafeEntry(DateTime checkIn, BusinessLocation location)
         {
