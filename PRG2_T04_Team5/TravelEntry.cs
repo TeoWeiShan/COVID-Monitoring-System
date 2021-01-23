@@ -72,20 +72,20 @@ namespace COVID_Monitoring_System
         {
             if (LastCountryOfEmbarkation == "New Zealand" || LastCountryOfEmbarkation == "Vietnam")
             {
-                int SHNDay = 0;
+                Console.WriteLine("0 Days of SHN");
+SHNEndDate = EntryDate.AddDays(0);
+                
             }
-            if (LastCountryOfEmbarkation == "Macao SAR")
+            else if (LastCountryOfEmbarkation == "Macao SAR")
             {
-                int SHNDay = 7;
+                Console.WriteLine("7 Days of SHN");
+                SHNEndDate = EntryDate.AddDays(7);
             }
             else
             {
-                int SHNDay = 14;
+                Console.WriteLine("14 Days of SHN");
+                SHNEndDate = EntryDate.AddDays(14);
             }
-
-
-
-            throw new NotImplementedException();
         }
 
         public override string ToString()
