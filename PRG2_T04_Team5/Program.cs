@@ -128,9 +128,12 @@ namespace COVID_Monitoring_System
 
                         if (line[9] != "" && line[10] != "" && line[11] != "")
                         {
-                            TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]));
+                            TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]) );
+                            te.IsPaid = Convert.ToBoolean(line[14]);
+                            te.SHNStay = new SHNFacility(line[15]);
                             p.AddTravelEntry(te);
                         }
+
 
                         personList.Add(p);
 
@@ -165,6 +168,7 @@ namespace COVID_Monitoring_System
                 foreach (Person p in personList)
                 {
                     Console.WriteLine(p.ToString());
+                    
 
                 }
                 foreach (BusinessLocation b in businessList)
@@ -235,12 +239,7 @@ namespace COVID_Monitoring_System
                         else
                         {
                             Console.WriteLine(p.TravelEntryList[p.TravelEntryList.Count - 1]);
-                            /*List<TravelEntry> TravelList = p.TravelEntryList;
-                            string travelDetails = "";
-                            foreach (TravelEntry entry in TravelList)
-                            {
-                                travelDetails += entry.EntryMode + "\n";
-                            }*/
+                            Console.WriteLine(p.TravelEntryList[p.TravelEntryList.Count - 1].IsPaid);
                         }
 
 
@@ -323,18 +322,18 @@ namespace COVID_Monitoring_System
                         string location = Console.ReadLine();
                         foreach (BusinessLocation b in businessList)
                         {
-                           if (b.BusinessName == location)
+                            if (b.BusinessName == location)
                             {
                                 if (b.MaximumCapacity == 0 /* biz cap not full after add 1 person*/ )
                                 {
                                     Console.WriteLine("Location full.Please try again later.");
                                 }
-                                else 
+                                else
                                 {
                                     SafeEntry e = new SafeEntry(checkin, b);
                                     p.AddSafeEntry(e);
                                     break;
-                                }    
+                                }
                             }
                         }
                     }
@@ -371,10 +370,10 @@ namespace COVID_Monitoring_System
             }
 
             static void CreateTravelEntryRecord(List<Person> personList, List<SHNFacility> SHNFacilityList)
-                {
-                    Console.Write("Enter person name: ");
-                    string name = Console.ReadLine();
-                    bool found = false;
+            {
+                Console.Write("Enter person name: ");
+                string name = Console.ReadLine();
+                bool found = false;
                 foreach (Person p in personList)
                 {
                     if (p.Name == name)
@@ -397,33 +396,42 @@ namespace COVID_Monitoring_System
                             string fName = Console.ReadLine();
                             //e.AssignSHNFacility();
 
-                            
+
                         }
                         p.AddTravelEntry(e);
                         Console.WriteLine("Travel Entry Record Created.");
                         break;
-                        }
                     }
+                }
                 if (!found) Console.WriteLine("Person is not found.");
 
             }
 
             static void CalculateSHNCharges(List<Person> personList)
             {
-                    Console.Write("Enter person name: ");
-                    string name = Console.ReadLine();
+                Console.Write("Enter person name: ");
+                string name = Console.ReadLine();
 
-                    bool found = false;
-                    foreach (Person p in personList)
+                bool found = false;
+                foreach (Person p in personList)
+                {
+
+                    if (p.Name == name && p.TravelEntryList[0].SHNEndDate != DateTime.Now)
                     {
-
-                        if (p.Name == name /*&& p.TravelEntryList.SHNEndDate != DateTime.Now*/) 
+                        Console.WriteLine(p.TravelEntryList[0]);
+                        Console.WriteLine("Please make payment. Enter 'Y' after payment is made.");
+                        string payment = Console.ReadLine();
+                        if (payment == "Y")
                         {
-                            Console.WriteLine(p.TravelEntryList);
-                            found = true;
-                            break;
+                            p.TravelEntryList[0].IsPaid = true;
+                            Console.WriteLine(p.TravelEntryList[0].IsPaid);
                         }
+
+
+                        found = true;
+                        break;
                     }
+                }
                 if (!found) Console.WriteLine("Person is not found.");
             }
         }

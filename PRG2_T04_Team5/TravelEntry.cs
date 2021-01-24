@@ -58,6 +58,7 @@ namespace COVID_Monitoring_System
 
         public TravelEntry(string lastCountryOfEmbarkation, string entryMode, DateTime entryDate)
         {
+
             LastCountryOfEmbarkation = lastCountryOfEmbarkation;
             EntryMode = entryMode;
             EntryDate = entryDate;
@@ -73,8 +74,8 @@ namespace COVID_Monitoring_System
             if (LastCountryOfEmbarkation == "New Zealand" || LastCountryOfEmbarkation == "Vietnam")
             {
                 Console.WriteLine("0 Days of SHN");
-SHNEndDate = EntryDate.AddDays(0);
-                
+                SHNEndDate = EntryDate.AddDays(0);
+
             }
             else if (LastCountryOfEmbarkation == "Macao SAR")
             {
@@ -90,7 +91,7 @@ SHNEndDate = EntryDate.AddDays(0);
 
         public override string ToString()
         {
-            return "Last Country of Embarkation: " + LastCountryOfEmbarkation + "\tEntry Mode: " + EntryMode + "\tEntry Date: " + EntryDate ;
+            return "Last Country of Embarkation: " + LastCountryOfEmbarkation + "\tEntry Mode: " + EntryMode + "\tEntry Date: " + EntryDate;
         }
     }
 }
