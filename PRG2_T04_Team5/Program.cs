@@ -130,17 +130,12 @@ namespace COVID_Monitoring_System
                         {
                             TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]) );
                             te.IsPaid = Convert.ToBoolean(line[14]);
-                            te.SHNStay = new SHNFacility(line[15]);
+                            //te.SHNStay = new SHNFacility(line[15]);
                             p.AddTravelEntry(te);
                         }
 
 
                         personList.Add(p);
-
-
-
-
-
 
                     }
                     if (line[0] == "resident")
@@ -289,7 +284,6 @@ namespace COVID_Monitoring_System
                 bool found = false;
                 foreach (BusinessLocation b in businessList)
                 {
-
                     if (b.BusinessName == bizname)
                     {
                         found = true;
@@ -335,7 +329,7 @@ namespace COVID_Monitoring_System
                                 {
                                     SafeEntry e = new SafeEntry(checkin, b);
                                     p.AddSafeEntry(e);
-                                    // visitorsNow +1
+                                    b.VisitorsNow = b.VisitorsNow + 1;
                                     break;
                                 }
                             }
@@ -345,7 +339,7 @@ namespace COVID_Monitoring_System
                 }
             }
 
-            static void SafeEntryCheckOut(List<Person> personList) //incomplete
+            static void SafeEntryCheckOut(List<Person> personList, List<BusinessLocation> businessList) //incomplete
             {
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
@@ -359,8 +353,12 @@ namespace COVID_Monitoring_System
                         Console.WriteLine(p);
                         Console.WriteLine("Select a record to check-out.");
                         string rec = Console.ReadLine();
-                        //list safeentry records (not checked-out)
-                        // PerformCheckOut() , visitorsNow -1
+                        //SafeEntry.PerformCheckOut(rec); error
+                        foreach (BusinessLocation b in businessList)
+                        {
+                            b.VisitorsNow = b.VisitorsNow - 1;
+                            break;
+                        }
                     }
 
                     if (!found)
