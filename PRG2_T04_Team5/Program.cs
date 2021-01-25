@@ -354,7 +354,7 @@ namespace COVID_Monitoring_System
                         Console.WriteLine(p);
                         Console.WriteLine("Select a record to check-out.");
                         string rec = Console.ReadLine();
-                        Console.WriteLine(SafeEntry.PerformCheckOut()); //error
+                        p.SafeEntryList[p.SafeEntryList.Count-1].PerformCheckOut();
                         foreach (BusinessLocation b in businessList)
                         {
                             b.VisitorsNow = b.VisitorsNow - 1;
