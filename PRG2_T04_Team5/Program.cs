@@ -164,13 +164,13 @@ namespace COVID_Monitoring_System
                     BusinessLocation b = new BusinessLocation(line[0], line[1], Convert.ToInt32(line[2]));
                     businessList.Add(b);
                 }
+
                 Console.WriteLine("All data has been loaded.");
                 foreach (Person p in personList)
                 {
                     Console.WriteLine(p.ToString());
-                    
-
                 }
+
                 foreach (BusinessLocation b in businessList)
                 {
                     Console.WriteLine(b.ToString());
@@ -255,7 +255,7 @@ namespace COVID_Monitoring_System
             }
 
             //===SafeEntry/TraceTogether===
-            static void TraceTogetherToken(List<Person> personList)
+            static void TraceTogetherToken(List<Person> personList) //incomplete
             {
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
@@ -296,6 +296,7 @@ namespace COVID_Monitoring_System
                         Console.WriteLine("Enter the new max capacity: ");
                         int newmaxcap = Convert.ToInt32(Console.ReadLine());
                         b.MaximumCapacity = newmaxcap;
+                        Console.Write("Max capacity of " +b+"has been updated.");
                         break;
                     }
                     else if (!found) Console.WriteLine("Business not found. Please try again.");
@@ -314,7 +315,7 @@ namespace COVID_Monitoring_System
                     if (p.Name == name)
                     {
                         found = true;
-                        //Console.WriteLine(p.Name);
+                        //Console.WriteLine(p.Name); test
                         foreach (BusinessLocation b in businessList)
                         {
                             Console.WriteLine(b);
@@ -334,6 +335,7 @@ namespace COVID_Monitoring_System
                                 {
                                     SafeEntry e = new SafeEntry(checkin, b);
                                     p.AddSafeEntry(e);
+                                    // visitorsNow +1
                                     break;
                                 }
                             }
@@ -343,11 +345,31 @@ namespace COVID_Monitoring_System
                 }
             }
 
-            static void SafeEntryCheckOut(List<Person> personList)
+            static void SafeEntryCheckOut(List<Person> personList) //incomplete
             {
-                Console.WriteLine("");
-            }
+                Console.WriteLine("Enter your name: ");
+                string name = Console.ReadLine();
+                bool found = false;
+                foreach (Person p in personList)
+                {
 
+                    if (p.Name == name)
+                    {
+                        found = true;
+                        Console.WriteLine(p);
+                        Console.WriteLine("Select a record to check-out.");
+                        string rec = Console.ReadLine();
+                        //list safeentry records (not checked-out)
+                        // PerformCheckOut() , visitorsNow -1
+                    }
+
+                    if (!found)
+                    {
+                        Console.WriteLine("Invalid input. Please try again.");
+                    }
+
+                }
+            }
 
             //===TravelEntry===
             static void ListAllSHNFacilities(List<SHNFacility> SHNFacilityList)
