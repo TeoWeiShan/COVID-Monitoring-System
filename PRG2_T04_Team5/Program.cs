@@ -85,7 +85,7 @@ namespace COVID_Monitoring_System
 
                 else if (option == "9")
                 {
-                    SafeEntryCheckOut(personList);
+                    SafeEntryCheckOut(personList, businessList);
                 }
 
 
@@ -339,7 +339,7 @@ namespace COVID_Monitoring_System
                 }
             }
 
-            static void SafeEntryCheckOut(List<Person> personList, List<BusinessLocation> businessList) //incomplete
+            static void SafeEntryCheckOut(List<Person> personList, List<BusinessLocation> businessList)
             {
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
