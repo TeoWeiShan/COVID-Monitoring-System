@@ -330,6 +330,7 @@ namespace COVID_Monitoring_System
                                     SafeEntry e = new SafeEntry(checkin, b);
                                     p.AddSafeEntry(e);
                                     b.VisitorsNow = b.VisitorsNow + 1;
+                                    Console.WriteLine("You have successfully checked-in.");
                                     break;
                                 }
                             }
@@ -353,12 +354,13 @@ namespace COVID_Monitoring_System
                         Console.WriteLine(p);
                         Console.WriteLine("Select a record to check-out.");
                         string rec = Console.ReadLine();
-                        //SafeEntry.PerformCheckOut(rec); error
+                        Console.WriteLine(SafeEntry.PerformCheckOut()); //error
                         foreach (BusinessLocation b in businessList)
                         {
                             b.VisitorsNow = b.VisitorsNow - 1;
                             break;
                         }
+                        Console.Write("You have successfully checked-out.");
                     }
 
                     if (!found)
