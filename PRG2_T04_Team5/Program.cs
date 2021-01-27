@@ -130,7 +130,7 @@ namespace COVID_Monitoring_System
                         if (line[9] != "" && line[10] != "" && line[11] != "")
                         {
                             TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]) );
-                            te.IsPaid = Convert.ToBoolean(line[14]);
+                            te.IsPaid = Convert.ToBoolean(line[13]);
                             //te.SHNStay = new SHNFacility(line[15]);
                             p.AddTravelEntry(te);
                             
@@ -148,6 +148,7 @@ namespace COVID_Monitoring_System
                             TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]));
                             te.SHNEndDate = Convert.ToDateTime(line[12]);
                             te.IsPaid = Convert.ToBoolean(line[13]);
+                            
                             p.AddTravelEntry(te);
                             
                         }
@@ -194,6 +195,11 @@ namespace COVID_Monitoring_System
                         readTask.Wait();
                         string data = readTask.Result;
                         shnList = JsonConvert.DeserializeObject<List<SHNFacility>>(data);
+                        foreach (SHNFacility f in shnList)
+                        {
+                            f.FacilityVacancy = f.FacilityCapacity;
+                        }
+                        //Console.WriteLine(shnList[0].FacilityVacancy);
 
                     }
 
@@ -426,7 +432,8 @@ namespace COVID_Monitoring_System
                         {
                             ListAllSHNFacilities(SHNFacilityList);
                             bool foundName = false;
-                            while (foundName == false)
+                            bool selected = false;
+                            while (selected == false)
                             {
                                 
                                 Console.Write("Enter SHN Facility Name: ");
@@ -435,13 +442,33 @@ namespace COVID_Monitoring_System
                                 
                                 foreach (SHNFacility f in SHNFacilityList)
                                 {
-
+                                    
                                     if (fName == f.FacilityName)
                                     {
-                                        //e.AssignSHNFacility();
-                                        Console.WriteLine("Assigned");
-                                        foundName = true;
-                                        break;
+                                        
+                                        if (f.IsAvailable() == true)
+                                        {
+                                            foundName = true;
+                                            //Console.WriteLine(f.FacilityVacancy);
+                                            f.FacilityVacancy -= 1;
+                                            //Console.WriteLine(f.FacilityVacancy);
+                                            //e.SHNStay = new SHNFacility(f.FacilityName, f.FacilityCapacity, f.DistFromAirCheckpoint, f.DistFromSeaCheckpoint, f.DistFromLandCheckpoint);
+                                            
+                                            e.AssignSHNFacility(new SHNFacility(f.FacilityName, f.FacilityCapacity, f.DistFromAirCheckpoint, f.DistFromSeaCheckpoint, f.DistFromLandCheckpoint));
+                                            //Console.WriteLine(e.SHNStay);        
+                                            //e.AssignSHNFacility();
+                                            //Console.WriteLine("SHN Facility has been assigned.");
+                                            Console.WriteLine("You are assigned to: \n" + e.SHNStay);
+                                            selected = true;
+                                            
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            foundName = true;
+                                            Console.WriteLine("No vacancy, please choose another.");
+                                        }
+                                        
                                     }
                                     //SHNFacility f = new SHNFacility()
                                 }
@@ -455,6 +482,7 @@ namespace COVID_Monitoring_System
 
                         }
                         p.AddTravelEntry(e);
+                        Console.WriteLine(p.TravelEntryList[p.TravelEntryList.Count - 1]);
                         Console.WriteLine("Travel Entry Record Created.");
                         break;
                     }
@@ -474,33 +502,43 @@ namespace COVID_Monitoring_System
 
                     if (p.Name == name )
                     {
-                        if (p.TravelEntryList[p.TravelEntryList.Count - 1].SHNEndDate < DateTime.Now)
+                        if (p.TravelEntryList.Count != 0)
                         {
-                            if (p.TravelEntryList[p.TravelEntryList.Count - 1].IsPaid == false)
+                            if (p.TravelEntryList[p.TravelEntryList.Count - 1].SHNEndDate < DateTime.Now)
                             {
-                                Console.Write(p.TravelEntryList[0].ToString());
-                                Console.WriteLine("\tSHNEndDate: " + p.TravelEntryList[p.TravelEntryList.Count - 1].SHNEndDate);
-
-                                Console.WriteLine("Please make payment. Enter 'Y' after payment is made.");
-                                string payment = Console.ReadLine();
-                                if (payment == "Y")
+                                if (p.TravelEntryList[p.TravelEntryList.Count - 1].IsPaid == false)
                                 {
-                                    p.TravelEntryList[0].IsPaid = true;
+                                    Console.Write(p.TravelEntryList[0].ToString());
+                                    Console.WriteLine("\tSHNEndDate: " + p.TravelEntryList[p.TravelEntryList.Count - 1].SHNEndDate);
+                                    double cost = p.TravelEntryList[0].SHNStay.CalculateTravelCost(p.TravelEntryList[0].EntryMode, p.TravelEntryList[0].EntryDate);
+                                    Console.WriteLine("Total Travel Payable: " + cost);
+                                    Console.WriteLine("Please make payment. Enter 'Y' after payment is made.");
+                                    string payment = Console.ReadLine();
+                                    if (payment == "Y")
+                                    {
+                                        p.TravelEntryList[0].IsPaid = true;
+                                    }
+                                    found = true;
+                                    break;
                                 }
-                                found = true;
-                                break;
+                                else if (p.TravelEntryList[p.TravelEntryList.Count - 1].IsPaid == true)
+                                {
+                                    Console.WriteLine("SHN Charges have been paid.");
+                                    found = true;
+                                    break;
+                                }
                             }
-                            else if (p.TravelEntryList[p.TravelEntryList.Count - 1].IsPaid == true)
+                            else
                             {
-                                Console.WriteLine("SHN Charges have been paid.");
-                                found = true;
-                                break;
+                                Console.WriteLine("SHN has not ended. Cannot proceed with payment.");
                             }
                         }
                         else
                         {
-                            Console.WriteLine("SHN has not ended. Cannot proceed with payment.");
+                            found = true;
+                            Console.WriteLine("No Travel Entry Found.");
                         }
+                        
 
                         
                     }
