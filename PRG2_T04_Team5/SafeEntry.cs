@@ -38,10 +38,7 @@ namespace COVID_Monitoring_System
             Location = location;
         }
 
-        public void PerformCheckOut()
-        {
-            throw new NotImplementedException();
-        }
+        public void PerformCheckOut() { }
 
         public override string ToString()
         {
