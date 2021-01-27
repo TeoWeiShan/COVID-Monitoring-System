@@ -18,14 +18,59 @@ namespace COVID_Monitoring_System
             List<Person> personList = new List<Person>();
             List<BusinessLocation> businessList = new List<BusinessLocation>();
 
+            bool loadedAPI = false;
+            while (loadedAPI == false)
+            {
+                Console.WriteLine("\n========================================\n" +
+                   "\n===General===\n" +
 
+                   "1) Load SHN Facility Data\n");
+
+                Console.WriteLine("========================================");
+                Console.Write("Please Enter An Option: ");
+                string option = Console.ReadLine();
+                Console.WriteLine("========================================\n");
+                if (option == "1")
+                {
+                    SHNFacilityList = LoadSHNFacilityData();
+                    ListAllSHNFacilities(SHNFacilityList);
+                    loadedAPI = true;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please try again.");
+                }
+
+            }
+            bool loadedCSV = false;
+            while (loadedCSV == false)
+            {
+                Console.WriteLine("\n========================================\n" +
+                   "\n===General===\n" +
+
+                   "2) Load Person and Business Location Data\n");
+
+                Console.WriteLine("========================================");
+                Console.Write("Please Enter An Option: ");
+                string option = Console.ReadLine();
+                Console.WriteLine("========================================\n");
+                if (option == "2")
+                {
+                    LoadPersonBusinessData(personList, businessList);
+                    loadedCSV = true;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please try again.");
+                }
+
+            }
             while (true)
             {
 
                 Console.WriteLine("\n========================================\n" +
                     "\n===General===\n" +
-                    "1) Load Person and Business Location Data\n" +
-                    "2) Load SHN Facility Data\n" +
+                    
                     "3) List all Visitors\n" +
                     "4) List Person Details\n" +
                     "\n===SafeEntry/TraceTogether===\n" +
@@ -45,16 +90,8 @@ namespace COVID_Monitoring_System
                 Console.WriteLine("========================================\n");
 
                 //===General===
-                if (option == "1")
-                {
-                    LoadPersonBusinessData(personList, businessList);
-                }
-                else if (option == "2")
-                {
-                    SHNFacilityList= LoadSHNFacilityData();
-                    ListAllSHNFacilities(SHNFacilityList);
-                }
-                else if (option == "3")
+                
+                if (option == "3")
                 {
                     ListVisitors(personList);
                 }
@@ -399,14 +436,36 @@ namespace COVID_Monitoring_System
 
             static void CreateVisitor(List<Person> personList)
             {
+                
                 Console.Write("Enter visitor name: ");
                 string name = Console.ReadLine();
-                Console.Write("Enter visitor passport number: ");
-                string passportNo = Console.ReadLine();
-                Console.Write("Enter visitor nationality: ");
-                string nationality = Console.ReadLine();
-                Person p = new Visitor(name, passportNo, nationality);
-                personList.Add(p);
+                bool nameExist = false;
+                foreach (Person person in personList)
+                {
+                    Console.WriteLine(person);
+                    if (name == person.Name)
+                    {
+                        Console.WriteLine("Person exists.");
+                        nameExist = true;
+                        break;
+                            
+                    }
+                    
+                        
+                }
+                if (!nameExist)
+                {
+                    Console.Write("Enter visitor passport number: ");
+                    string passportNo = Console.ReadLine();
+                    Console.Write("Enter visitor nationality: ");
+                    string nationality = Console.ReadLine();
+                    Person p = new Visitor(name, passportNo, nationality);
+                    personList.Add(p);
+                }
+                
+                
+                
+                
             }
 
             static void CreateTravelEntryRecord(List<Person> personList, List<SHNFacility> SHNFacilityList)
@@ -508,15 +567,24 @@ namespace COVID_Monitoring_System
                             {
                                 if (p.TravelEntryList[p.TravelEntryList.Count - 1].IsPaid == false)
                                 {
-                                    Console.Write(p.TravelEntryList[0].ToString());
+                                    Console.Write(p.TravelEntryList[p.TravelEntryList.Count - 1].ToString());
                                     Console.WriteLine("\tSHNEndDate: " + p.TravelEntryList[p.TravelEntryList.Count - 1].SHNEndDate);
-                                    double cost = p.TravelEntryList[0].SHNStay.CalculateTravelCost(p.TravelEntryList[0].EntryMode, p.TravelEntryList[0].EntryDate);
-                                    Console.WriteLine("Total Travel Payable: " + cost);
+                                    double finalCost = p.CalculateSHNCharges() * 1.07;
+                                    Console.WriteLine("Total Payable: " + finalCost);
+                                    /*if (p.TravelEntryList[p.TravelEntryList.Count - 1].LastCountryOfEmbarkation != "Vietnam" ||
+                                        p.TravelEntryList[p.TravelEntryList.Count - 1].LastCountryOfEmbarkation != "New Zealand" ||
+                                        p.TravelEntryList[p.TravelEntryList.Count - 1].LastCountryOfEmbarkation != "Macao SAR")
+                                    {
+                                        double cost = p.TravelEntryList[0].SHNStay.CalculateTravelCost(p.TravelEntryList[0].EntryMode, p.TravelEntryList[0].EntryDate);
+
+                                    }*/
+                                    
+                                    //Console.WriteLine("Total Travel Payable: " + cost);
                                     Console.WriteLine("Please make payment. Enter 'Y' after payment is made.");
                                     string payment = Console.ReadLine();
                                     if (payment == "Y")
                                     {
-                                        p.TravelEntryList[0].IsPaid = true;
+                                        p.TravelEntryList[p.TravelEntryList.Count - 1].IsPaid = true;
                                     }
                                     found = true;
                                     break;
@@ -530,6 +598,7 @@ namespace COVID_Monitoring_System
                             }
                             else
                             {
+                                found = true;
                                 Console.WriteLine("SHN has not ended. Cannot proceed with payment.");
                             }
                         }
