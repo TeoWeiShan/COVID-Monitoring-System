@@ -17,6 +17,7 @@ namespace COVID_Monitoring_System
             List<SHNFacility> SHNFacilityList = new List<SHNFacility>();
             List<Person> personList = new List<Person>();
             List<BusinessLocation> businessList = new List<BusinessLocation>();
+            List<SafeEntry> safeEntryList = new List<SafeEntry>();
 
             bool loadedAPI = false;
             while (loadedAPI == false)
@@ -103,7 +104,7 @@ namespace COVID_Monitoring_System
                 //===SafeEntry/TraceTogether===
                 else if (option == "5")
                 {
-                    TraceTogetherToken(personList);
+                    TraceTogetherToken(personList, safeEntryList);
                 }
 
                 else if (option == "6")
@@ -300,23 +301,31 @@ namespace COVID_Monitoring_System
 
             }
 
+            
             //===SafeEntry/TraceTogether===
-            static void TraceTogetherToken(List<Person> personList) //incomplete
+            static void TraceTogetherToken(List<Person> personList, List<SafeEntry> safeEntryList) //incomplete
             {
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
                 bool found = false;
                 foreach (Resident r in personList)
                 {
-                    if (r.Name == name) //create & assign Token object if no token. replace if >6 months
+                    if (r.Name == name) 
                     {
                         found = true;
-                        //TraceTogetherToken t = new TraceTogetherToken(serialNo, collectionLocation, expiryDate);
-                        //r.AddTraceTogetherToken(t);
+                        Console.WriteLine("Enter a unique serial no.");
+                        string serialNo = Console.ReadLine();
+                        Console.WriteLine("Enter your preferred collection location.");
+                        string collectionLocation = Console.ReadLine();
+                        DateTime expiryDate = DateTime.Today;
+                        TraceTogetherToken t = new TraceTogetherToken(serialNo, collectionLocation, expiryDate);
+                        //add and assign token
                         break;
+
+                        //if token <= 1 month from expiry, replace token. (token expires 6 months from collection)
                     }
 
-                    else if (!found) Console.WriteLine("Business not found. Please try again.");
+                    else if (!found) Console.WriteLine("Name not found. Please try again.");
                 }
             }
 
