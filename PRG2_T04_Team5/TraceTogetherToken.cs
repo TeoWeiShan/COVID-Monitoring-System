@@ -53,7 +53,7 @@ namespace COVID_Monitoring_System
 
         public void ReplaceToken(string serialNo, string collectionLocation)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Your token is replaced. Your serial no. is " + serialNo + "." + "Please collect it at "+collectionLocation+".");
         }
 
     }
