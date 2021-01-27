@@ -429,7 +429,7 @@ namespace COVID_Monitoring_System
             {
                 foreach (SHNFacility f in SHNFacilityList)
                 {
-                    Console.WriteLine(f);
+                    Console.WriteLine(f  +"\tFacility Vacancy: " + f.FacilityVacancy);
                 }
             }
 
@@ -517,7 +517,7 @@ namespace COVID_Monitoring_System
                                             //Console.WriteLine(e.SHNStay);        
                                             //e.AssignSHNFacility();
                                             //Console.WriteLine("SHN Facility has been assigned.");
-                                            Console.WriteLine("You are assigned to: \n" + e.SHNStay);
+                                            Console.WriteLine("You are assigned to: \n" + e.SHNStay + "\tFacility Vacancy: "+ f.FacilityVacancy);
                                             selected = true;
                                             
                                             break;
