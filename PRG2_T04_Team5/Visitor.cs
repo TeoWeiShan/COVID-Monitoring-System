@@ -31,7 +31,26 @@ namespace COVID_Monitoring_System
 
         public override double CalculateSHNCharges()
         {
-            throw new NotImplementedException();
+            double cost = 200;
+            double addCost = 0;
+            if ((TravelEntryList[TravelEntryList.Count - 1].SHNEndDate - TravelEntryList[TravelEntryList.Count - 1].EntryDate).Days == 14)
+            {
+                addCost = 2000;
+                //addCost = SHNFacility.CalculateTravelCost(TravelEntryList[TravelEntryList.Count - 1].EntryMode, TravelEntryList[TravelEntryList.Count - 1].EntryDate);
+                Console.WriteLine("14 Days");
+            }
+            else if ((TravelEntryList[TravelEntryList.Count - 1].SHNEndDate - TravelEntryList[TravelEntryList.Count - 1].EntryDate).Days == 7)
+            {
+                addCost = 80;
+                Console.WriteLine("7 Days");
+            }
+            else if ((TravelEntryList[TravelEntryList.Count - 1].SHNEndDate - TravelEntryList[TravelEntryList.Count - 1].EntryDate).Days == 0)
+            {
+                addCost = 80;
+                Console.WriteLine("0 Days");
+            }
+
+            return (addCost + cost);
 
         }
 
