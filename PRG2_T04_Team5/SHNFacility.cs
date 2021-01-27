@@ -116,7 +116,7 @@ namespace COVID_Monitoring_System
 
         public override string ToString()
         {
-            return "Facility Name: " + FacilityName + "\tFacility Capacity: " + FacilityCapacity + "\tFacility Vacancy: " + FacilityVacancy;
+            return "Facility Name: " + FacilityName + "\tFacility Capacity: " + FacilityCapacity;
         }
     }
 }
