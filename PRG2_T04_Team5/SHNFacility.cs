@@ -69,20 +69,33 @@ namespace COVID_Monitoring_System
 
         public double CalculateTravelCost(string entryMode, DateTime entryDate)
         {
+            double surchage = 0;
+            if ((entryDate.TimeOfDay >= (new DateTime(0001,12,31,6,0,0)).TimeOfDay  && entryDate.TimeOfDay <= (new DateTime(0001, 12, 31, 8, 59, 0)).TimeOfDay)
+                || (entryDate.TimeOfDay >= (new DateTime(0001, 12, 31, 18, 0, 0)).TimeOfDay && entryDate.TimeOfDay <= (new DateTime(0001, 12, 31, 23, 59, 0)).TimeOfDay))
+            {
+                surchage = 1.25;
+                Console.WriteLine("25% Surchage");
+            }
+            else if(entryDate.TimeOfDay >= (new DateTime(0001, 12, 31, 0, 0, 0)).TimeOfDay && entryDate.TimeOfDay <= (new DateTime(0001, 12, 31, 5, 59, 0)).TimeOfDay)
+            {
+                surchage = 1.50;
+                Console.WriteLine("50% Surchage");
+            }
+
             double cost = 0;
             if ( entryMode == "Land")
             {
-               cost = (DistFromLandCheckpoint * 0.22 + 50) * 1.25;
+               cost = (DistFromLandCheckpoint * 0.22 + 50) * surchage;
                 return cost;
             }
             else if (entryMode == "Sea")
             {
-                cost = (DistFromSeaCheckpoint * 0.22 + 50) * 1.25;
+                cost = (DistFromSeaCheckpoint * 0.22 + 50) * surchage;
                 return cost;
             }
             else if(entryMode == "Air")
             {
-                cost = (DistFromAirCheckpoint * 0.22 + 50) * 1.25;
+                cost = (DistFromAirCheckpoint * 0.22 + 50) * surchage;
                 return cost;
             }
 
@@ -103,7 +116,7 @@ namespace COVID_Monitoring_System
 
         public override string ToString()
         {
-            return "Facility Name: " + FacilityName + "\tFacility Capacity: " + FacilityCapacity;
+            return "Facility Name: " + FacilityName + "\tFacility Capacity: " + FacilityCapacity + "\tFacility Vacancy: " + FacilityVacancy;
         }
     }
 }
