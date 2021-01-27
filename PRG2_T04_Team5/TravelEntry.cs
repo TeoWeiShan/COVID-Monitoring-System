@@ -64,9 +64,9 @@ namespace COVID_Monitoring_System
             EntryDate = entryDate;
         }
 
-        public void AssignSHNFacility(SHNFacility SHNStay)
+        public void AssignSHNFacility(SHNFacility stay)
         {
-            throw new NotImplementedException();
+            SHNStay = stay;
         }
 
         public void CalculateSHNDuration()
