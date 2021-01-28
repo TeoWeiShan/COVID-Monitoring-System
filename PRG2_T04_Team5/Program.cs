@@ -19,6 +19,7 @@ namespace COVID_Monitoring_System
             List<BusinessLocation> businessList = new List<BusinessLocation>();
             List<SafeEntry> safeEntryList = new List<SafeEntry>();
 
+            //Force users to load facility API to ensure program can work
             bool loadedAPI = false;
             while (loadedAPI == false)
             {
@@ -28,12 +29,13 @@ namespace COVID_Monitoring_System
                    "1) Load SHN Facility Data\n");
 
                 Console.WriteLine("========================================");
-                Console.Write("Please Enter An Option: ");
+                Console.Write("Please enter '1' to load data: ");
                 string option = Console.ReadLine();
                 Console.WriteLine("========================================\n");
                 if (option == "1")
                 {
                     SHNFacilityList = LoadSHNFacilityData();
+                    Console.WriteLine("Displaying all loaded data...\n");
                     ListAllSHNFacilities(SHNFacilityList);
                     loadedAPI = true;
                 }
@@ -43,27 +45,29 @@ namespace COVID_Monitoring_System
                 }
 
             }
+            //Force users to load person business data to ensure program can work
             bool loadedCSV = false;
             while (loadedCSV == false)
             {
                 Console.WriteLine("\n========================================\n" +
                    "\n===General===\n" +
-
                    "2) Load Person and Business Location Data\n");
-
                 Console.WriteLine("========================================");
-                Console.Write("Please Enter An Option: ");
+                Console.Write("Please enter '2' to load data: ");
                 string option = Console.ReadLine();
                 Console.WriteLine("========================================\n");
                 if (option == "2")
                 {
                     LoadPersonBusinessData(personList, businessList, SHNFacilityList);
                     loadedCSV = true;
+                    
+
                 }
                 else
                 {
                     Console.WriteLine("Invalid input. Please try again.");
                 }
+                
 
             }
             while (true)
@@ -157,63 +161,73 @@ namespace COVID_Monitoring_System
             //===General===
             static void LoadPersonBusinessData(List<Person> personList, List<BusinessLocation> businessList, List<SHNFacility> SHNFacilityList)
             {
-                string[] csvLinesPerson = File.ReadAllLines("Person.csv");
-                for (int i = 1; i < csvLinesPerson.Length; i++)
+                try
                 {
-                    string[] line = csvLinesPerson[i].Split(',');
-                    if (line[0] == "visitor")
-                    {
-                        Person p = new Visitor(line[1], line[4], line[5]);
 
-                        if (line[9] != "" && line[10] != "" && line[11] != "")
+                    string[] csvLinesPerson = File.ReadAllLines("Person.csv");
+                    for (int i = 1; i < csvLinesPerson.Length; i++)
+                    {
+                        string[] line = csvLinesPerson[i].Split(',');
+                        if (line[0] == "visitor")
                         {
-                            TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]) );
-                            te.SHNEndDate = Convert.ToDateTime(line[12]);
-                            te.IsPaid = Convert.ToBoolean(line[13]);
-                            if (line[14] != "")
+                            Person p = new Visitor(line[1], line[4], line[5]);
+
+                            if (line[9] != "" && line[10] != "" && line[11] != "")
                             {
-                                foreach (SHNFacility f in SHNFacilityList)
+                                TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]));
+                                te.SHNEndDate = Convert.ToDateTime(line[12]);
+                                te.IsPaid = Convert.ToBoolean(line[13]);
+                                if (line[14] != "")
                                 {
-                                    if (f.FacilityName == line[14])
+                                    foreach (SHNFacility f in SHNFacilityList)
                                     {
-                                        te.AssignSHNFacility(new SHNFacility(f.FacilityName,f.FacilityCapacity,f.DistFromAirCheckpoint,f.DistFromSeaCheckpoint,f.DistFromLandCheckpoint)); ;
+                                        if (f.FacilityName == line[14])
+                                        {
+                                            te.AssignSHNFacility(new SHNFacility(f.FacilityName, f.FacilityCapacity, f.DistFromAirCheckpoint, f.DistFromSeaCheckpoint, f.DistFromLandCheckpoint)); ;
+                                        }
                                     }
+                                    te.AssignSHNFacility(new SHNFacility());
                                 }
-                                te.AssignSHNFacility(new SHNFacility());
+                                p.AddTravelEntry(te);
+
                             }
-                            //te.SHNStay = new SHNFacility(line[15]);
-                            p.AddTravelEntry(te);
-                            
+
+
+                            personList.Add(p);
+
                         }
-
-
-                        personList.Add(p);
-
-                    }
-                    if (line[0] == "resident")
-                    {
-                        Person p = new Resident(line[1], line[2], Convert.ToDateTime(line[3]));
-                        if (line[9] != "" && line[10] != "" && line[11] != "")
+                        if (line[0] == "resident")
                         {
-                            TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]));
-                            te.SHNEndDate = Convert.ToDateTime(line[12]);
-                            te.IsPaid = Convert.ToBoolean(line[13]);
-                            
-                            p.AddTravelEntry(te);
-                            
+                            Person p = new Resident(line[1], line[2], Convert.ToDateTime(line[3]));
+                            if (line[9] != "" && line[10] != "" && line[11] != "")
+                            {
+                                TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]));
+                                te.SHNEndDate = Convert.ToDateTime(line[12]);
+                                te.IsPaid = Convert.ToBoolean(line[13]);
+
+                                p.AddTravelEntry(te);
+
+                            }
+                            personList.Add(p);
                         }
-                        personList.Add(p);
+
                     }
 
+
+                    string[] csvLinesBusiness = File.ReadAllLines("BusinessLocation.csv");
+                    for (int i = 1; i < csvLinesBusiness.Length; i++)
+                    {
+                        string[] line = csvLinesBusiness[i].Split(',');
+                        BusinessLocation b = new BusinessLocation(line[0], line[1], Convert.ToInt32(line[2]));
+                        businessList.Add(b);
+                    }
+
+                    
                 }
-
-
-                string[] csvLinesBusiness = File.ReadAllLines("BusinessLocation.csv");
-                for (int i = 1; i < csvLinesBusiness.Length; i++)
+                catch(FileNotFoundException)
                 {
-                    string[] line = csvLinesBusiness[i].Split(',');
-                    BusinessLocation b = new BusinessLocation(line[0], line[1], Convert.ToInt32(line[2]));
-                    businessList.Add(b);
+                    Console.WriteLine("Files cannot be found. Exiting program...");
+                    Environment.Exit(0);
                 }
 
                 Console.WriteLine("All data has been loaded.");
@@ -249,8 +263,12 @@ namespace COVID_Monitoring_System
                         {
                             f.FacilityVacancy = f.FacilityCapacity;
                         }
-                        //Console.WriteLine(shnList[0].FacilityVacancy);
-
+                        Console.WriteLine("Successfully loaded data.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Data cannot be loaded. Exiting program...");
+                        Environment.Exit(0);
                     }
 
                     return shnList;
