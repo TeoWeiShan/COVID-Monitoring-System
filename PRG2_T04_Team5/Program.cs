@@ -57,7 +57,7 @@ namespace COVID_Monitoring_System
                 Console.WriteLine("========================================\n");
                 if (option == "2")
                 {
-                    LoadPersonBusinessData(personList, businessList);
+                    LoadPersonBusinessData(personList, businessList, SHNFacilityList);
                     loadedCSV = true;
                 }
                 else
@@ -155,7 +155,7 @@ namespace COVID_Monitoring_System
 
 
             //===General===
-            static void LoadPersonBusinessData(List<Person> personList, List<BusinessLocation> businessList)
+            static void LoadPersonBusinessData(List<Person> personList, List<BusinessLocation> businessList, List<SHNFacility> SHNFacilityList)
             {
                 string[] csvLinesPerson = File.ReadAllLines("Person.csv");
                 for (int i = 1; i < csvLinesPerson.Length; i++)
@@ -168,7 +168,19 @@ namespace COVID_Monitoring_System
                         if (line[9] != "" && line[10] != "" && line[11] != "")
                         {
                             TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]) );
+                            te.SHNEndDate = Convert.ToDateTime(line[12]);
                             te.IsPaid = Convert.ToBoolean(line[13]);
+                            if (line[14] != "")
+                            {
+                                foreach (SHNFacility f in SHNFacilityList)
+                                {
+                                    if (f.FacilityName == line[14])
+                                    {
+                                        te.AssignSHNFacility(new SHNFacility(f.FacilityName,f.FacilityCapacity,f.DistFromAirCheckpoint,f.DistFromSeaCheckpoint,f.DistFromLandCheckpoint)); ;
+                                    }
+                                }
+                                te.AssignSHNFacility(new SHNFacility());
+                            }
                             //te.SHNStay = new SHNFacility(line[15]);
                             p.AddTravelEntry(te);
                             
