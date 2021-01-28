@@ -19,6 +19,8 @@ namespace COVID_Monitoring_System
             List<BusinessLocation> businessList = new List<BusinessLocation>();
             List<SafeEntry> safeEntryList = new List<SafeEntry>();
 
+
+
             //Force users to load facility API to ensure program can work
             bool loadedAPI = false;
             while (loadedAPI == false)
@@ -32,6 +34,7 @@ namespace COVID_Monitoring_System
                 Console.Write("Please enter '1' to load data: ");
                 string option = Console.ReadLine();
                 Console.WriteLine("========================================\n");
+                //Enter 1 to confirm loading of data, else data will not be loaded and cannot access program
                 if (option == "1")
                 {
                     SHNFacilityList = LoadSHNFacilityData();
@@ -41,6 +44,7 @@ namespace COVID_Monitoring_System
                 }
                 else
                 {
+                    //Validation: only 1 to proceed with program
                     Console.WriteLine("Invalid input. Please try again.");
                 }
 
@@ -56,26 +60,30 @@ namespace COVID_Monitoring_System
                 Console.Write("Please enter '2' to load data: ");
                 string option = Console.ReadLine();
                 Console.WriteLine("========================================\n");
+                //Enter 1 to confirm loading of data, else data will not be loaded and cannot access program
                 if (option == "2")
                 {
                     LoadPersonBusinessData(personList, businessList, SHNFacilityList);
                     loadedCSV = true;
-                    
+
 
                 }
                 else
                 {
+                    //Validation: only 2 to proceed with program
                     Console.WriteLine("Invalid input. Please try again.");
                 }
-                
+
 
             }
+
+            //Display menu
             while (true)
             {
 
                 Console.WriteLine("\n========================================\n" +
                     "\n===General===\n" +
-                    
+
                     "3) List all Visitors\n" +
                     "4) List Person Details\n" +
                     "\n===SafeEntry/TraceTogether===\n" +
@@ -95,7 +103,7 @@ namespace COVID_Monitoring_System
                 Console.WriteLine("========================================\n");
 
                 //===General===
-                
+
                 if (option == "3")
                 {
                     ListVisitors(personList);
@@ -153,6 +161,7 @@ namespace COVID_Monitoring_System
 
                 else
                 {
+                    //Validation
                     Console.WriteLine("Invalid input, please try again.");
                 }
             }
@@ -163,20 +172,23 @@ namespace COVID_Monitoring_System
             {
                 try
                 {
-
+                    //Extract data from csv and append to make new Person objects
                     string[] csvLinesPerson = File.ReadAllLines("Person.csv");
                     for (int i = 1; i < csvLinesPerson.Length; i++)
                     {
                         string[] line = csvLinesPerson[i].Split(',');
                         if (line[0] == "visitor")
                         {
+                            //Input data to Visitor
                             Person p = new Visitor(line[1], line[4], line[5]);
 
+                            //Input data to Vistor with Travel Entry
                             if (line[9] != "" && line[10] != "" && line[11] != "")
                             {
                                 TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]));
                                 te.SHNEndDate = Convert.ToDateTime(line[12]);
                                 te.IsPaid = Convert.ToBoolean(line[13]);
+                                //Input data to Vistor staying at SHN
                                 if (line[14] != "")
                                 {
                                     foreach (SHNFacility f in SHNFacilityList)
@@ -198,7 +210,9 @@ namespace COVID_Monitoring_System
                         }
                         if (line[0] == "resident")
                         {
+                            //Input data to Resident
                             Person p = new Resident(line[1], line[2], Convert.ToDateTime(line[3]));
+                            //Input data to Resident with Travel Entry
                             if (line[9] != "" && line[10] != "" && line[11] != "")
                             {
                                 TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]));
@@ -213,29 +227,33 @@ namespace COVID_Monitoring_System
 
                     }
 
-
+                    //Extract data from csv and append to make new BuisnessLocation objects
                     string[] csvLinesBusiness = File.ReadAllLines("BusinessLocation.csv");
                     for (int i = 1; i < csvLinesBusiness.Length; i++)
                     {
+                        //Input data to BuisnessLocation
                         string[] line = csvLinesBusiness[i].Split(',');
                         BusinessLocation b = new BusinessLocation(line[0], line[1], Convert.ToInt32(line[2]));
                         businessList.Add(b);
                     }
 
-                    
+
                 }
-                catch(FileNotFoundException)
+                //Validation: File unavailable
+                catch (FileNotFoundException)
                 {
                     Console.WriteLine("Files cannot be found. Exiting program...");
                     Environment.Exit(0);
                 }
-
-                Console.WriteLine("All data has been loaded.");
+                //Successfully loaded data, display data loaded for Person and Business
+                Console.WriteLine("Successfully loaded data."
+                    + "\nDisplaying all loaded data...\n");
+                Console.WriteLine("People Data: \n");
                 foreach (Person p in personList)
                 {
                     Console.WriteLine(p.ToString());
                 }
-
+                Console.WriteLine("\nBuisness Data: \n");
                 foreach (BusinessLocation b in businessList)
                 {
                     Console.WriteLine(b.ToString());
@@ -249,30 +267,43 @@ namespace COVID_Monitoring_System
                 List<SHNFacility> shnList = new List<SHNFacility>();
                 using (HttpClient client = new HttpClient())
                 {
-                    client.BaseAddress = new Uri("https://covidmonitoringapiprg2.azurewebsites.net");
-                    Task<HttpResponseMessage> responseTask = client.GetAsync("/facility");
-                    responseTask.Wait();
-                    HttpResponseMessage result = responseTask.Result;
-                    if (result.IsSuccessStatusCode)
+                    try
                     {
-                        Task<string> readTask = result.Content.ReadAsStringAsync();
-                        readTask.Wait();
-                        string data = readTask.Result;
-                        shnList = JsonConvert.DeserializeObject<List<SHNFacility>>(data);
-                        foreach (SHNFacility f in shnList)
+                        //Extract data from API and append to make new SHNFacility objects
+                        client.BaseAddress = new Uri("https://covidmonitoringapiprg2.azurewebsites.net");
+                        Task<HttpResponseMessage> responseTask = client.GetAsync("/facility");
+                        responseTask.Wait();
+                        HttpResponseMessage result = responseTask.Result;
+                        if (result.IsSuccessStatusCode)
                         {
-                            f.FacilityVacancy = f.FacilityCapacity;
+                            Task<string> readTask = result.Content.ReadAsStringAsync();
+                            readTask.Wait();
+                            string data = readTask.Result;
+                            shnList = JsonConvert.DeserializeObject<List<SHNFacility>>(data);
+                            //Create FacilityCapacity for each object
+                            foreach (SHNFacility f in shnList)
+                            {
+                                f.FacilityVacancy = f.FacilityCapacity;
+                            }
+                            Console.WriteLine("Successfully loaded data.");
                         }
-                        Console.WriteLine("Successfully loaded data.");
+                        //Validaion: for data that cannot be loaded
+                        else
+                        {
+                            Console.WriteLine("Data cannot be loaded. Exiting program...");
+                            Environment.Exit(0);
+                        }
                     }
-                    else
+                    //Validaion: for data that cannot be loaded
+                    catch (AggregateException)
                     {
                         Console.WriteLine("Data cannot be loaded. Exiting program...");
                         Environment.Exit(0);
                     }
 
+
                     return shnList;
-                    
+
 
                 }
 
@@ -280,30 +311,27 @@ namespace COVID_Monitoring_System
 
             static void ListVisitors(List<Person> personList)
             {
-                if (personList.Count == 0)
+                //Displays all vistors
+                Console.WriteLine("Displaying all visitors: ");
+                foreach (Person p in personList)
                 {
-                    Console.WriteLine("No data has been loaded.");
-                }
-                else
-                {
-                    foreach (Person p in personList)
+                    if (p is Visitor)
                     {
-                        if (p is Visitor)
-                        {
-                            Console.WriteLine(p.ToString());
-                        }
+                        Console.WriteLine(p.ToString());
                     }
                 }
+
             }
 
             static void ListPersonDetails(List<Person> personList)
             {
+                //Displays a person detail based on name search
+                
                 Console.Write("Enter person name: ");
                 string name = Console.ReadLine();
                 bool found = false;
                 foreach (Person p in personList)
                 {
-
                     if (p.Name == name)
                     {
                         Console.WriteLine("Person Found");
@@ -311,7 +339,6 @@ namespace COVID_Monitoring_System
                         if (p.TravelEntryList.Count == 0)
                         {
                             Console.WriteLine("No Travel Entry Details");
-
                         }
                         else
                         {
@@ -326,12 +353,13 @@ namespace COVID_Monitoring_System
                         break;
                     }
                 }
+                //Validation: also validation for inproper input
                 if (!found) Console.WriteLine("Person is not found.");
 
 
             }
 
-            
+
             //===SafeEntry/TraceTogether===
             static void TraceTogetherToken(List<Person> personList, List<SafeEntry> safeEntryList) //incomplete
             {
@@ -340,7 +368,7 @@ namespace COVID_Monitoring_System
                 bool found = false;
                 foreach (Resident r in personList)
                 {
-                    if (r.Name == name) 
+                    if (r.Name == name)
                     {
                         found = true;
                         Console.WriteLine("Enter a unique serial no.");
@@ -380,7 +408,7 @@ namespace COVID_Monitoring_System
                         Console.WriteLine("Enter the new max capacity: ");
                         int newmaxcap = Convert.ToInt32(Console.ReadLine());
                         b.MaximumCapacity = newmaxcap;
-                        Console.Write("Max capacity of " +b+"has been updated.");
+                        Console.Write("Max capacity of " + b + "has been updated.");
                         break;
                     }
                     else if (!found) Console.WriteLine("Business not found. Please try again.");
@@ -395,7 +423,7 @@ namespace COVID_Monitoring_System
                 bool found = false;
                 foreach (Person p in personList)
                 {
-                    
+
                     if (p.Name == name)
                     {
                         found = true;
@@ -444,7 +472,7 @@ namespace COVID_Monitoring_System
                         Console.WriteLine(p);
                         Console.WriteLine("Select a record to check-out.");
                         string rec = Console.ReadLine();
-                        p.SafeEntryList[p.SafeEntryList.Count-1].PerformCheckOut();
+                        p.SafeEntryList[p.SafeEntryList.Count - 1].PerformCheckOut();
                         foreach (BusinessLocation b in businessList)
                         {
                             b.VisitorsNow = b.VisitorsNow - 1;
@@ -454,7 +482,7 @@ namespace COVID_Monitoring_System
                     }
 
 
-                    
+
                     if (!found)
                     {
                         Console.WriteLine("Invalid input. Please try again.");
@@ -468,14 +496,14 @@ namespace COVID_Monitoring_System
             {
                 foreach (SHNFacility f in SHNFacilityList)
                 {
-                    Console.WriteLine(f  +"\tFacility Vacancy: " + f.FacilityVacancy);
+                    Console.WriteLine(f + "\tFacility Vacancy: " + f.FacilityVacancy);
                 }
             }
 
 
             static void CreateVisitor(List<Person> personList)
             {
-                
+
                 Console.Write("Enter visitor name: ");
                 string name = Console.ReadLine();
                 bool nameExist = false;
@@ -487,10 +515,10 @@ namespace COVID_Monitoring_System
                         Console.WriteLine("Person exists.");
                         nameExist = true;
                         break;
-                            
+
                     }
-                    
-                        
+
+
                 }
                 if (!nameExist)
                 {
@@ -501,10 +529,10 @@ namespace COVID_Monitoring_System
                     Person p = new Visitor(name, passportNo, nationality);
                     personList.Add(p);
                 }
-                
-                
-                
-                
+
+
+
+
             }
 
             static void CreateTravelEntryRecord(List<Person> personList, List<SHNFacility> SHNFacilityList)
@@ -533,17 +561,17 @@ namespace COVID_Monitoring_System
                             bool selected = false;
                             while (selected == false)
                             {
-                                
+
                                 Console.Write("Enter SHN Facility Name: ");
                                 string fName = Console.ReadLine();
 
-                                
+
                                 foreach (SHNFacility f in SHNFacilityList)
                                 {
-                                    
+
                                     if (fName == f.FacilityName)
                                     {
-                                        
+
                                         if (f.IsAvailable() == true)
                                         {
                                             foundName = true;
@@ -551,14 +579,14 @@ namespace COVID_Monitoring_System
                                             f.FacilityVacancy -= 1;
                                             //Console.WriteLine(f.FacilityVacancy);
                                             //e.SHNStay = new SHNFacility(f.FacilityName, f.FacilityCapacity, f.DistFromAirCheckpoint, f.DistFromSeaCheckpoint, f.DistFromLandCheckpoint);
-                                            
+
                                             e.AssignSHNFacility(new SHNFacility(f.FacilityName, f.FacilityCapacity, f.DistFromAirCheckpoint, f.DistFromSeaCheckpoint, f.DistFromLandCheckpoint));
                                             //Console.WriteLine(e.SHNStay);        
                                             //e.AssignSHNFacility();
                                             //Console.WriteLine("SHN Facility has been assigned.");
-                                            Console.WriteLine("You are assigned to: \n" + e.SHNStay + "\tFacility Vacancy: "+ f.FacilityVacancy);
+                                            Console.WriteLine("You are assigned to: \n" + e.SHNStay + "\tFacility Vacancy: " + f.FacilityVacancy);
                                             selected = true;
-                                            
+
                                             break;
                                         }
                                         else
@@ -566,16 +594,16 @@ namespace COVID_Monitoring_System
                                             foundName = true;
                                             Console.WriteLine("No vacancy, please choose another.");
                                         }
-                                        
+
                                     }
                                     //SHNFacility f = new SHNFacility()
                                 }
                                 if (!foundName) Console.WriteLine("Facility is not found.");
                             }
-                            
 
 
-                            
+
+
 
 
                         }
@@ -598,7 +626,7 @@ namespace COVID_Monitoring_System
                 foreach (Person p in personList)
                 {
 
-                    if (p.Name == name )
+                    if (p.Name == name)
                     {
                         if (p.TravelEntryList.Count != 0)
                         {
@@ -610,15 +638,6 @@ namespace COVID_Monitoring_System
                                     Console.WriteLine("\tSHNEndDate: " + p.TravelEntryList[p.TravelEntryList.Count - 1].SHNEndDate);
                                     double finalCost = p.CalculateSHNCharges() * 1.07;
                                     Console.WriteLine("Total Payable: " + finalCost);
-                                    /*if (p.TravelEntryList[p.TravelEntryList.Count - 1].LastCountryOfEmbarkation != "Vietnam" ||
-                                        p.TravelEntryList[p.TravelEntryList.Count - 1].LastCountryOfEmbarkation != "New Zealand" ||
-                                        p.TravelEntryList[p.TravelEntryList.Count - 1].LastCountryOfEmbarkation != "Macao SAR")
-                                    {
-                                        double cost = p.TravelEntryList[0].SHNStay.CalculateTravelCost(p.TravelEntryList[0].EntryMode, p.TravelEntryList[0].EntryDate);
-
-                                    }*/
-                                    
-                                    //Console.WriteLine("Total Travel Payable: " + cost);
                                     Console.WriteLine("Please make payment. Enter 'Y' after payment is made.");
                                     string payment = Console.ReadLine();
                                     if (payment == "Y")
@@ -646,11 +665,11 @@ namespace COVID_Monitoring_System
                             found = true;
                             Console.WriteLine("No Travel Entry Found.");
                         }
-                        
 
-                        
+
+
                     }
-                    
+
                 }
                 if (!found) Console.WriteLine("Person is not found.");
             }
