@@ -69,7 +69,7 @@ namespace COVID_Monitoring_System
 
         public double CalculateTravelCost(string entryMode, DateTime entryDate)
         {
-            double surchage = 0;
+            double surchage = 1;
             if ((entryDate.TimeOfDay >= (new DateTime(0001,12,31,6,0,0)).TimeOfDay  && entryDate.TimeOfDay <= (new DateTime(0001, 12, 31, 8, 59, 0)).TimeOfDay)
                 || (entryDate.TimeOfDay >= (new DateTime(0001, 12, 31, 18, 0, 0)).TimeOfDay && entryDate.TimeOfDay <= (new DateTime(0001, 12, 31, 23, 59, 0)).TimeOfDay))
             {
