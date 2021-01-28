@@ -41,25 +41,25 @@ namespace COVID_Monitoring_System
         {
             double cost = 200;
             double addCost = 0;
-            if ((TravelEntryList[TravelEntryList.Count - 1].SHNEndDate - TravelEntryList[TravelEntryList.Count - 1].EntryDate).Days == 14)
+            TravelEntry last = TravelEntryList[TravelEntryList.Count - 1];
+            int duration = (last.SHNEndDate - last.EntryDate).Days;
+            if (duration == 14)
             {
                 Console.WriteLine("14 Days");
                 addCost = 1020;
 
             }
-            else if ((TravelEntryList[TravelEntryList.Count - 1].SHNEndDate - TravelEntryList[TravelEntryList.Count - 1].EntryDate).Days == 7)
+            else if (duration == 7)
             {
                 Console.WriteLine("7 Days");
                 addCost = 20;
             }
-            else if ((TravelEntryList[TravelEntryList.Count - 1].SHNEndDate - TravelEntryList[TravelEntryList.Count - 1].EntryDate).Days == 0)
+            else if (duration == 0)
             {
                 Console.WriteLine("0 Days");
             }
 
             return (addCost + cost);
-
-            //throw new NotImplementedException();
         }
 
         public override string ToString()
