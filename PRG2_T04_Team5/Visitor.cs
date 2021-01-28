@@ -28,23 +28,24 @@ namespace COVID_Monitoring_System
             PassportNo = passportNo;
             Nationality = nationality;
         }
-
+        
         public override double CalculateSHNCharges()
         {
             double cost = 200;
             double addCost = 0;
-            if ((TravelEntryList[TravelEntryList.Count - 1].SHNEndDate - TravelEntryList[TravelEntryList.Count - 1].EntryDate).Days == 14)
+            TravelEntry last = TravelEntryList[TravelEntryList.Count - 1];
+            int duration = (last.SHNEndDate - last.EntryDate).Days;
+            if ( duration== 14)
             {
-                addCost = 2000;
-                //addCost = SHNFacility.CalculateTravelCost(TravelEntryList[TravelEntryList.Count - 1].EntryMode, TravelEntryList[TravelEntryList.Count - 1].EntryDate);
+                addCost = last.SHNStay.CalculateTravelCost(last.EntryMode, last.EntryDate) + 2000;
                 Console.WriteLine("14 Days");
             }
-            else if ((TravelEntryList[TravelEntryList.Count - 1].SHNEndDate - TravelEntryList[TravelEntryList.Count - 1].EntryDate).Days == 7)
+            else if (duration == 7)
             {
                 addCost = 80;
                 Console.WriteLine("7 Days");
             }
-            else if ((TravelEntryList[TravelEntryList.Count - 1].SHNEndDate - TravelEntryList[TravelEntryList.Count - 1].EntryDate).Days == 0)
+            else if (duration == 0)
             {
                 addCost = 80;
                 Console.WriteLine("0 Days");
