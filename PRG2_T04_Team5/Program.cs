@@ -382,21 +382,20 @@ namespace COVID_Monitoring_System
                 bool found = false;
                 foreach (Person p in personList)
                 {
-                    if (p is Resident)
+                    if (p is Resident)                                                                                      //ensure that the person is a resident as only residents have token
                     {
                         found = true;
                         Resident r = (Resident)p;
-                        if (r.Token is null)
+                        if (r.Token is null)                                                                                //check if resident has a token
                         {
                             string serialNo = ("T" + 12345);
-                            string newserialNo = (serialNo + 1);
-                            Console.WriteLine("Enter your preferred collection location.");
+                            string newserialNo = (serialNo + 1);                                                            //generate a s/n for token
+                            Console.WriteLine("Enter your preferred collection location (CCs only).");
                             string collectionLocation = Console.ReadLine();
                             DateTime Date = DateTime.Today;
                             DateTime expiryDate = Date.AddMonths(6);
-                            TraceTogetherToken t = new TraceTogetherToken(newserialNo, collectionLocation, expiryDate);
-                            //add and assign token
-                            r.Token = t;
+                            TraceTogetherToken t = new TraceTogetherToken(newserialNo, collectionLocation, expiryDate);     //create new token object
+                            r.Token = t;                                                                                    //assign token to resident
                             Console.WriteLine("Your TraceTogether token s/n: " + newserialNo + "\nYour collection location: " + collectionLocation + "\nToken expiry date: " + expiryDate);
                             break;
                         }
@@ -407,7 +406,7 @@ namespace COVID_Monitoring_System
                             {
                                 r.Token.IsEligibleForReplacement();
                                 Console.WriteLine("Your token is expiring soon on " + r.Token.ExpiryDate + ". Would you like to replace it?");
-                                Console.WriteLine("(1) Yes \n(2) No");
+                                Console.WriteLine("Enter 'Yes' or 'No'");
                                 string choice = Console.ReadLine();
                                 if (choice == "Yes")
                                 {
@@ -419,12 +418,12 @@ namespace COVID_Monitoring_System
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Invalid input. Please choose yes/no.");
+                                    Console.WriteLine("Invalid input. Please choose yes/no."); //validation - only accept yes/no answer
                                 }
                             } 
                         }
                     }
-                    else if (!found) Console.WriteLine("Name not found. Please try again.");
+                    else if (!found) Console.WriteLine("Name not found. Please try again."); //validation - only accept person names in personList
                 }
             }
 
@@ -432,7 +431,7 @@ namespace COVID_Monitoring_System
             {
                 foreach (BusinessLocation b in businessList)
                 {
-                    Console.WriteLine(b);
+                    Console.WriteLine(b);                                     //display biz locations
                 }
             }
 
@@ -448,13 +447,15 @@ namespace COVID_Monitoring_System
                         found = true;
                         Console.WriteLine("Enter the new max capacity: ");
                         int newmaxcap = Convert.ToInt32(Console.ReadLine());
-                        b.MaximumCapacity = newmaxcap;
+                        b.MaximumCapacity = newmaxcap;                                          //update biz location capacity
                         Console.Write("Max capacity of " + bizname + "has been updated.");
                         break;
                     }
-                    else if (!found) Console.WriteLine("Business not found. Please try again.");
+                    else if (!found)
+                    {
+                        Console.WriteLine("Business not found. Please try again.");             //validation - only accept businesses in businessList
+                    }
                 }
-
             }
 
             static void SafeEntryCheckIn(List<Person> personList, List<BusinessLocation> businessList)
@@ -464,14 +465,12 @@ namespace COVID_Monitoring_System
                 bool found = false;
                 foreach (Person p in personList)
                 {
-
-                    if (p.Name == name)
+                    if (p.Name == name)                                 //check if name input belongs in personList
                     {
                         found = true;
-                        //Console.WriteLine(p.Name); test
                         foreach (BusinessLocation b in businessList)
                         {
-                            Console.WriteLine(b);
+                            Console.WriteLine(b);                       //display biz locations
                         }
                         DateTime checkin = DateTime.Now;
                         Console.WriteLine("Select business location: ");
@@ -487,15 +486,15 @@ namespace COVID_Monitoring_System
                                 else
                                 {
                                     SafeEntry e = new SafeEntry(checkin, b);
-                                    p.AddSafeEntry(e);
-                                    b.VisitorsNow = b.VisitorsNow + 1;
+                                    p.AddSafeEntry(e);                                          //add safeentry object to person
+                                    b.VisitorsNow = b.VisitorsNow + 1;                          //increase visitors count by 1 upon CheckIn
                                     Console.WriteLine("You have successfully checked-in.");
                                     break;
                                 }
                             }
                         }
                     }
-                    else if (!found) Console.WriteLine("Name not found. Please try again.");
+                    else if (!found) Console.WriteLine("Name not found. Please try again.");    //validation - only accept names in personList
                 }
             }
 
@@ -513,18 +512,18 @@ namespace COVID_Monitoring_System
                         Console.WriteLine(p);
                         Console.WriteLine("Select a record to check-out.");
                         string rec = Console.ReadLine();
-                        p.SafeEntryList[p.SafeEntryList.Count - 1].PerformCheckOut();
+                        p.SafeEntryList[p.SafeEntryList.Count - 1].PerformCheckOut();   //remove person from SafeEntryList
                         foreach (BusinessLocation b in businessList)
                         {
-                            b.VisitorsNow = b.VisitorsNow - 1;
+                            b.VisitorsNow = b.VisitorsNow - 1;                          //reduce visitors count by 1 upon CheckOut
                             break;
                         }
                         Console.Write("You have successfully checked-out.");
                     }
 
-                    if (!found)
+                    else if (!found)
                     {
-                        Console.WriteLine("Invalid input. Please try again.");
+                        Console.WriteLine("Invalid input. Please try again.");          //validation - person not found
                     }
 
                 }
