@@ -325,44 +325,47 @@ namespace COVID_Monitoring_System
             static void ListPersonDetails(List<Person> personList)
             {
                 //Displays a person detail based on name search
-                
+
                 Console.Write("Enter person name: ");
                 string name = Console.ReadLine();
                 bool found = false;
                 foreach (Person p in personList)
                 {
+                    //Check if person exist in person list
                     if (p.Name == name)
                     {
+                        //Person exist
                         Console.WriteLine("Person Found");
                         Console.WriteLine(p);
+                        //Person don't have Travel Entry
                         if (p.TravelEntryList.Count == 0)
                         {
                             Console.WriteLine("No Travel Entry Details");
                         }
                         else
                         {
+                            //Person have Travel Entry
                             Console.WriteLine("Most recent travel entry detail: ");
                             TravelEntry last = p.TravelEntryList[p.TravelEntryList.Count - 1];
                             Console.WriteLine(last.ToString(), "SHN Fee Paid: ", last.IsPaid);
+                            //Person stay at Facility
                             if (last.SHNStay != null)
                             {
                                 Console.WriteLine(last.SHNStay);
                             }
+                            //Person did not stay at Facility
                             else
                             {
                                 Console.WriteLine("No SHN Facility Stay Details");
                             }
-                            
+
                         }
-
-
-
 
                         found = true;
                         break;
                     }
                 }
-                //Validation: also validation for inproper input
+                //Person don't exist in the list. 
                 if (!found) Console.WriteLine("Person is not found.");
 
 
@@ -370,7 +373,7 @@ namespace COVID_Monitoring_System
 
 
             //===SafeEntry/TraceTogether===
-            static void TraceTogetherToken(List<Person> personList, List<SafeEntry> safeEntryList) 
+            static void TraceTogetherToken(List<Person> personList, List<SafeEntry> safeEntryList)
             {
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
@@ -395,7 +398,7 @@ namespace COVID_Monitoring_System
                             Console.WriteLine("Your TraceTogether token s/n: " + newserialNo + "\nYour collection location: " + collectionLocation + "\nToken expiry date: " + expiryDate);
                             break;
                         }
-                        
+
                         else
                         {
                             if (r.Token.ExpiryDate < DateTime.Now.AddMonths(1))
@@ -416,7 +419,7 @@ namespace COVID_Monitoring_System
                                 {
                                     Console.WriteLine("Invalid input. Please choose yes/no.");
                                 }
-                            } 
+                            }
                         }
                     }
                     else if (!found) Console.WriteLine("Name not found. Please try again.");
@@ -528,18 +531,19 @@ namespace COVID_Monitoring_System
             //===TravelEntry===
             static void ListAllSHNFacilities(List<SHNFacility> SHNFacilityList)
             {
+                //Display all facilities 
                 foreach (SHNFacility f in SHNFacilityList)
                 {
                     Console.WriteLine(f + "\tFacility Vacancy: " + f.FacilityVacancy);
                 }
             }
 
-
             static void CreateVisitor(List<Person> personList)
             {
 
                 Console.Write("Enter visitor name: ");
                 string name = Console.ReadLine();
+                //Check for same name in personList
                 bool nameExist = false;
                 foreach (Person person in personList)
                 {
@@ -554,8 +558,10 @@ namespace COVID_Monitoring_System
 
 
                 }
+                //if no same name in personList
                 if (!nameExist)
                 {
+                    //Create visitor
                     Console.Write("Enter visitor passport number: ");
                     string passportNo = Console.ReadLine();
                     Console.Write("Enter visitor nationality: ");
@@ -576,79 +582,91 @@ namespace COVID_Monitoring_System
                 bool found = false;
                 foreach (Person p in personList)
                 {
+                    //Check for person in list
                     if (p.Name == name)
                     {
                         found = true;
-                        Console.WriteLine("Enter last country of embarkation: ");
-                        string lastCountry = Console.ReadLine();
-                        Console.WriteLine("Enter entry mode: ");
-                        string entryMode = Console.ReadLine();
-                        Console.WriteLine("Enter entry date: ");
-                        DateTime entryDate = Convert.ToDateTime(Console.ReadLine());
-                        TravelEntry e = new TravelEntry(lastCountry, entryMode, entryDate);
-                        e.CalculateSHNDuration();
-                        Console.WriteLine(e.SHNEndDate);
-                        if (e.SHNEndDate == e.EntryDate.AddDays(14))
+                        while (true)
                         {
-                            ListAllSHNFacilities(SHNFacilityList);
-                            bool foundName = false;
-                            bool selected = false;
-                            while (selected == false)
+                            try
                             {
-
-                                Console.Write("Enter SHN Facility Name: ");
-                                string fName = Console.ReadLine();
-
-
-                                foreach (SHNFacility f in SHNFacilityList)
+                                Console.Write("Enter last country of embarkation: ");
+                                string lastCountry = Console.ReadLine();
+                                Console.Write("Enter entry mode (Air/Land/Sea): ");
+                                string entryMode = Console.ReadLine();
+                                //Validate accepted forms of entry
+                                if (entryMode == "Air" || entryMode == "Land" || entryMode == "Sea")
                                 {
-
-                                    if (fName == f.FacilityName)
+                                    Console.Write("Enter entry date (dd/MM/yyyy HH:mm:ss) : ");
+                                    DateTime entryDate = Convert.ToDateTime(Console.ReadLine());
+                                    //Create new object
+                                    TravelEntry e = new TravelEntry(lastCountry, entryMode, entryDate);
+                                    e.CalculateSHNDuration();
+                                    Console.WriteLine(e.SHNEndDate);
+                                    //Prompt SHN Selection Menu if SHN Duration is 14 Days
+                                    if (e.SHNEndDate == e.EntryDate.AddDays(14))
                                     {
+                                        ListAllSHNFacilities(SHNFacilityList);
 
-                                        if (f.IsAvailable() == true)
+                                        bool selected = false;
+                                        while (selected == false)
                                         {
-                                            foundName = true;
-                                            //Console.WriteLine(f.FacilityVacancy);
-                                            f.FacilityVacancy -= 1;
-                                            //Console.WriteLine(f.FacilityVacancy);
-                                            //e.SHNStay = new SHNFacility(f.FacilityName, f.FacilityCapacity, f.DistFromAirCheckpoint, f.DistFromSeaCheckpoint, f.DistFromLandCheckpoint);
+                                            //Select facility
+                                            Console.Write("Enter SHN Facility Name: ");
+                                            string fName = Console.ReadLine();
+                                            bool foundName = false;
 
-                                            e.AssignSHNFacility(new SHNFacility(f.FacilityName, f.FacilityCapacity, f.DistFromAirCheckpoint, f.DistFromSeaCheckpoint, f.DistFromLandCheckpoint));
-                                            //Console.WriteLine(e.SHNStay);        
-                                            //e.AssignSHNFacility();
-                                            //Console.WriteLine("SHN Facility has been assigned.");
-                                            Console.WriteLine("You are assigned to: \n" + e.SHNStay + "\tFacility Vacancy: " + f.FacilityVacancy);
-                                            selected = true;
-
-                                            break;
+                                            foreach (SHNFacility f in SHNFacilityList)
+                                            {
+                                                //Check for facility in list
+                                                if (fName == f.FacilityName)
+                                                {
+                                                    //Check if facility is full capacity
+                                                    if (f.IsAvailable() == true)
+                                                    {
+                                                        //Assign facility
+                                                        foundName = true;
+                                                        f.FacilityVacancy -= 1;
+                                                        e.AssignSHNFacility(new SHNFacility(f.FacilityName, f.FacilityCapacity, f.DistFromAirCheckpoint, f.DistFromSeaCheckpoint, f.DistFromLandCheckpoint));
+                                                        Console.WriteLine("You are assigned to: \n" + e.SHNStay + "\tFacility Vacancy: " + f.FacilityVacancy);
+                                                        selected = true;
+                                                    }
+                                                    else
+                                                    {
+                                                        //Facility unable to be assigned
+                                                        foundName = true;
+                                                        Console.WriteLine("No vacancy, please choose another.");
+                                                    }
+                                                }
+                                            }
+                                            //Facility not found
+                                            if (!foundName) Console.WriteLine("Facility is not found.");
                                         }
-                                        else
-                                        {
-                                            foundName = true;
-                                            Console.WriteLine("No vacancy, please choose another.");
-                                        }
-
                                     }
-                                    //SHNFacility f = new SHNFacility()
+                                    //Create travel entry for person
+                                    p.AddTravelEntry(e);
+                                    Console.WriteLine(p.TravelEntryList[p.TravelEntryList.Count - 1]);
+                                    Console.WriteLine("Travel Entry Record Created.");
+                                    break;
                                 }
-                                if (!foundName) Console.WriteLine("Facility is not found.");
+                                //Validate accepted input words
+                                else
+                                {
+                                    Console.WriteLine("Invalid input. Enter 'Air' , 'Land' or 'Sea' only. Please re-enter your information again.");
+
+                                }
                             }
-
-
-
-
-
-
+                            //Validate date input
+                            catch (FormatException)
+                            {
+                                Console.WriteLine("Invalid input. Enter in the given format 'dd / MM / yyyy HH: mm:ss'. Please re - enter your information again");
+                            }
                         }
-                        p.AddTravelEntry(e);
-                        Console.WriteLine(p.TravelEntryList[p.TravelEntryList.Count - 1]);
-                        Console.WriteLine("Travel Entry Record Created.");
-                        break;
+
                     }
                 }
+                //Person not found
                 if (!found) Console.WriteLine("Person is not found.");
-
             }
 
             static void CalculateSHNCharges(List<Person> personList)
@@ -657,30 +675,41 @@ namespace COVID_Monitoring_System
                 string name = Console.ReadLine();
 
                 bool found = false;
+                //Check for person in personList
                 foreach (Person p in personList)
                 {
-
+                    //If person exist
                     if (p.Name == name)
                     {
+                        //If person has a TravelEntry
                         if (p.TravelEntryList.Count != 0)
                         {
+                            //If person has ended their SHN
                             if (p.TravelEntryList[p.TravelEntryList.Count - 1].SHNEndDate < DateTime.Now)
                             {
+                                //If person has not paid SHN Fees
                                 if (p.TravelEntryList[p.TravelEntryList.Count - 1].IsPaid == false)
                                 {
+                                    //Display payable
                                     Console.Write(p.TravelEntryList[p.TravelEntryList.Count - 1].ToString());
                                     Console.WriteLine("\tSHNEndDate: " + p.TravelEntryList[p.TravelEntryList.Count - 1].SHNEndDate);
                                     double finalCost = p.CalculateSHNCharges() * 1.07;
                                     Console.WriteLine("Total Payable: " + finalCost);
-                                    Console.WriteLine("Please make payment. Enter 'Y' after payment is made.");
+                                    Console.WriteLine("Please make payment. Enter 'Y' after payment is made. Enter others to not pay for you SHN fees.");
                                     string payment = Console.ReadLine();
                                     if (payment == "Y")
                                     {
                                         p.TravelEntryList[p.TravelEntryList.Count - 1].IsPaid = true;
+                                        Console.WriteLine("SHN Charges have been paid.");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("SHN Charges have NOT been paid. Please remember to pay!");
                                     }
                                     found = true;
                                     break;
                                 }
+                                //If person has paid SHN Fees
                                 else if (p.TravelEntryList[p.TravelEntryList.Count - 1].IsPaid == true)
                                 {
                                     Console.WriteLine("SHN Charges have been paid.");
@@ -688,23 +717,24 @@ namespace COVID_Monitoring_System
                                     break;
                                 }
                             }
+                            //If person has not ended their SHN
                             else
                             {
                                 found = true;
                                 Console.WriteLine("SHN has not ended. Cannot proceed with payment.");
                             }
                         }
+                        //If person does not have a TravelEntry
                         else
                         {
                             found = true;
                             Console.WriteLine("No Travel Entry Found.");
                         }
 
-
-
                     }
 
                 }
+                //If does not person exist
                 if (!found) Console.WriteLine("Person is not found.");
             }
         }
