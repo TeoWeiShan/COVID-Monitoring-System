@@ -370,7 +370,7 @@ namespace COVID_Monitoring_System
 
 
             //===SafeEntry/TraceTogether===
-            static void TraceTogetherToken(List<Person> personList, List<SafeEntry> safeEntryList) //incomplete
+            static void TraceTogetherToken(List<Person> personList, List<SafeEntry> safeEntryList) 
             {
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
@@ -380,12 +380,12 @@ namespace COVID_Monitoring_System
                     if (r.Name == name)
                     {
                         found = true;
-                        Console.WriteLine("Enter a unique serial no.");
-                        string serialNo = Console.ReadLine();
+                        string serialNo = ("T"+ 12345);
+                        string newserialNo = (serialNo + 1);
                         Console.WriteLine("Enter your preferred collection location.");
                         string collectionLocation = Console.ReadLine();
                         DateTime expiryDate = DateTime.Today;
-                        TraceTogetherToken t = new TraceTogetherToken(serialNo, collectionLocation, expiryDate);
+                        TraceTogetherToken t = new TraceTogetherToken(newserialNo, collectionLocation, expiryDate);
                         //add and assign token
                         break;
 
