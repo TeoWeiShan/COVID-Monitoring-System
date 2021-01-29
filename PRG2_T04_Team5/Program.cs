@@ -198,7 +198,6 @@ namespace COVID_Monitoring_System
                                             te.AssignSHNFacility(new SHNFacility(f.FacilityName, f.FacilityCapacity, f.DistFromAirCheckpoint, f.DistFromSeaCheckpoint, f.DistFromLandCheckpoint)); ;
                                         }
                                     }
-                                    te.AssignSHNFacility(new SHNFacility());
                                 }
                                 p.AddTravelEntry(te);
 
@@ -342,8 +341,18 @@ namespace COVID_Monitoring_System
                         }
                         else
                         {
-                            Console.WriteLine(p.TravelEntryList[p.TravelEntryList.Count - 1]);
-                            Console.WriteLine(p.TravelEntryList[p.TravelEntryList.Count - 1].IsPaid);
+                            Console.WriteLine("Most recent travel entry detail: ");
+                            TravelEntry last = p.TravelEntryList[p.TravelEntryList.Count - 1];
+                            Console.WriteLine(last.ToString(), "SHN Fee Paid: ", last.IsPaid);
+                            if (last.SHNStay != null)
+                            {
+                                Console.WriteLine(last.SHNStay);
+                            }
+                            else
+                            {
+                                Console.WriteLine("No SHN Facility Stay Details");
+                            }
+                            
                         }
 
 
