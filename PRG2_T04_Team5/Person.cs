@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
+//============================================================
+// Student Number : S10205156 , S10205409
+// Student Name : Teo Wei Shan, Angelica Sim
+// Module Group : T04
+//============================================================
+
 namespace COVID_Monitoring_System
 {
     abstract class Person

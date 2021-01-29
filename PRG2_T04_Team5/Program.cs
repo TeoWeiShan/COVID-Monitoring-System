@@ -5,6 +5,11 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using Newtonsoft.Json;
 
+//============================================================
+// Student Number : S10205156 , S10205409
+// Student Name : Teo Wei Shan, Angelica Sim
+// Module Group : T04
+//============================================================
 
 namespace COVID_Monitoring_System
 {
