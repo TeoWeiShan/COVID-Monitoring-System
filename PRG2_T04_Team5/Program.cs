@@ -387,11 +387,9 @@ namespace COVID_Monitoring_System
                         DateTime expiryDate = DateTime.Today;
                         TraceTogetherToken t = new TraceTogetherToken(newserialNo, collectionLocation, expiryDate);
                         //add and assign token
-                        break;
 
                         //if token <= 1 month from expiry, replace token. (token expires 6 months from collection)
                     }
-
                     else if (!found) Console.WriteLine("Name not found. Please try again.");
                 }
             }
@@ -417,7 +415,7 @@ namespace COVID_Monitoring_System
                         Console.WriteLine("Enter the new max capacity: ");
                         int newmaxcap = Convert.ToInt32(Console.ReadLine());
                         b.MaximumCapacity = newmaxcap;
-                        Console.Write("Max capacity of " + b + "has been updated.");
+                        Console.Write("Max capacity of " + bizname + "has been updated.");
                         break;
                     }
                     else if (!found) Console.WriteLine("Business not found. Please try again.");
