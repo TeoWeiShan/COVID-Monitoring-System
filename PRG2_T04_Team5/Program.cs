@@ -383,9 +383,9 @@ namespace COVID_Monitoring_System
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
                 bool found = false;
-                foreach (Person p in personList)
+                foreach (Person p in personList) 
                 {
-                    if (p is Resident)                                                                                      //ensure that the person is a resident as only residents have token
+                    if (p.Name == name && p is Resident)                                                                                      //ensure that the person is a resident as only residents have token
                     {
                         found = true;
                         Resident r = (Resident)p;
@@ -393,8 +393,9 @@ namespace COVID_Monitoring_System
                         {
                             string serialNo = ("T" + 12345);
                             string newserialNo = (serialNo + 1);                                                            //generate a s/n for token
-                            Console.WriteLine("Enter your preferred collection location (CCs only).");
+                            Console.WriteLine("Enter your preferred collection location (CCs only)");
                             string collectionLocation = Console.ReadLine();
+                            Console.WriteLine("");
                             DateTime Date = DateTime.Today;
                             DateTime expiryDate = Date.AddMonths(6);
                             TraceTogetherToken t = new TraceTogetherToken(newserialNo, collectionLocation, expiryDate);     //create new token object
@@ -427,6 +428,7 @@ namespace COVID_Monitoring_System
                         }
                     }
                     else if (!found) Console.WriteLine("Name not found. Please try again."); //validation - only accept person names in personList
+                    break;
                 }
             }
 
@@ -457,6 +459,7 @@ namespace COVID_Monitoring_System
                     else if (!found)
                     {
                         Console.WriteLine("Business not found. Please try again.");             //validation - only accept businesses in businessList
+                        break;
                     }
                 }
             }
@@ -498,6 +501,7 @@ namespace COVID_Monitoring_System
                         }
                     }
                     else if (!found) Console.WriteLine("Name not found. Please try again.");    //validation - only accept names in personList
+                    break;
                 }
             }
 
@@ -527,6 +531,7 @@ namespace COVID_Monitoring_System
                     else if (!found)
                     {
                         Console.WriteLine("Invalid input. Please try again.");          //validation - person not found
+                        break;
                     }
 
                 }
