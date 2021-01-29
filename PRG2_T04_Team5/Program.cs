@@ -375,20 +375,49 @@ namespace COVID_Monitoring_System
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
                 bool found = false;
-                foreach (Resident r in personList)
+                foreach (Person p in personList)
                 {
-                    if (r.Name == name)
+                    if (p is Resident)
                     {
                         found = true;
-                        string serialNo = ("T"+ 12345);
-                        string newserialNo = (serialNo + 1);
-                        Console.WriteLine("Enter your preferred collection location.");
-                        string collectionLocation = Console.ReadLine();
-                        DateTime expiryDate = DateTime.Today;
-                        TraceTogetherToken t = new TraceTogetherToken(newserialNo, collectionLocation, expiryDate);
-                        //add and assign token
-
-                        //if token <= 1 month from expiry, replace token. (token expires 6 months from collection)
+                        Resident r = (Resident)p;
+                        if (r.Token is null)
+                        {
+                            string serialNo = ("T" + 12345);
+                            string newserialNo = (serialNo + 1);
+                            Console.WriteLine("Enter your preferred collection location.");
+                            string collectionLocation = Console.ReadLine();
+                            DateTime Date = DateTime.Today;
+                            DateTime expiryDate = Date.AddMonths(6);
+                            TraceTogetherToken t = new TraceTogetherToken(newserialNo, collectionLocation, expiryDate);
+                            //add and assign token
+                            r.Token = t;
+                            Console.WriteLine("Your TraceTogether token s/n: " + newserialNo + "\nYour collection location: " + collectionLocation + "\nToken expiry date: " + expiryDate);
+                            break;
+                        }
+                        
+                        else
+                        {
+                            if (r.Token.ExpiryDate < DateTime.Now.AddMonths(1))
+                            {
+                                r.Token.IsEligibleForReplacement();
+                                Console.WriteLine("Your token is expiring soon on " + r.Token.ExpiryDate + ". Would you like to replace it?");
+                                Console.WriteLine("(1) Yes \n(2) No");
+                                string choice = Console.ReadLine();
+                                if (choice == "Yes")
+                                {
+                                    r.Token.IsEligibleForReplacement();
+                                }
+                                else if (choice == "No")
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Invalid input. Please choose yes/no.");
+                                }
+                            } 
+                        }
                     }
                     else if (!found) Console.WriteLine("Name not found. Please try again.");
                 }
@@ -487,8 +516,6 @@ namespace COVID_Monitoring_System
                         }
                         Console.Write("You have successfully checked-out.");
                     }
-
-
 
                     if (!found)
                     {
