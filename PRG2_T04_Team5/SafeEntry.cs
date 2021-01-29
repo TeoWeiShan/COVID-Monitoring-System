@@ -44,7 +44,10 @@ namespace COVID_Monitoring_System
             Location = location;
         }
 
-        public void PerformCheckOut() { }
+        public void PerformCheckOut()
+        {
+            CheckOut = checkOut;
+        }
 
         public override string ToString()
         {

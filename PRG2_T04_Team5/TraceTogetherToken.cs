@@ -57,9 +57,12 @@ namespace COVID_Monitoring_System
             return eligibility;
         }
 
-        public void ReplaceToken(string serialNo, string collectionLocation)
+        public void ReplaceToken(string newserialNo, string collectionLocation)
         {
-            Console.WriteLine("Your token is replaced. Your serial no. is " + serialNo + "." + "Please collect it at "+collectionLocation+".");
+            serialNo = "T" + 12345;
+            newserialNo = serialNo +1;
+            Console.WriteLine("Enter your preferred collection location (CCs only)");
+            collectionLocation = Console.ReadLine();
         }
 
         public override string ToString()

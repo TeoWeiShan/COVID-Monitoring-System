@@ -141,7 +141,7 @@ namespace COVID_Monitoring_System
 
                 else if (option == "9")
                 {
-                    SafeEntryCheckOut(personList, businessList);
+                    SafeEntryCheckOut(personList, safeEntryList, businessList);
                 }
 
 
@@ -410,7 +410,7 @@ namespace COVID_Monitoring_System
                 bool found = false;
                 foreach (Person p in personList) 
                 {
-                    if (p.Name == name && p is Resident)                                                                                      //ensure that the person is a resident as only residents have token
+                    if (p.Name == name && p is Resident)                                                                    //ensure that the person is a resident as only residents have token
                     {
                         found = true;
                         Resident r = (Resident)p;
@@ -440,6 +440,7 @@ namespace COVID_Monitoring_System
                                 if (choice == "Yes")
                                 {
                                     r.Token.IsEligibleForReplacement();
+                                    //r.Token.ReplaceToken();
                                 }
                                 else if (choice == "No")
                                 {
@@ -517,7 +518,7 @@ namespace COVID_Monitoring_System
                                 else
                                 {
                                     SafeEntry e = new SafeEntry(checkin, b);
-                                    p.AddSafeEntry(e);                                          //add safeentry object to person
+                                    p.AddSafeEntry(e);                           //add safeentry object to person
                                     b.VisitorsNow += 1;                          //increase visitors count by 1 upon CheckIn
                                     Console.WriteLine("You have successfully checked-in.");
                                     break;
@@ -530,7 +531,7 @@ namespace COVID_Monitoring_System
                 }
             }
 
-            static void SafeEntryCheckOut(List<Person> personList, List<BusinessLocation> businessList)
+            static void SafeEntryCheckOut(List<Person> personList, List<SafeEntry> safeEntryList, List<BusinessLocation> businessList)
             {
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
@@ -542,13 +543,18 @@ namespace COVID_Monitoring_System
                     {
                         found = true;
                         //bool record = false;
-                        Console.WriteLine(p);
+                        foreach (SafeEntry e in safeEntryList)
+                        {
+                            Console.WriteLine(e);
+                        }
+                        Console.WriteLine(p.SafeEntryList);
                         Console.WriteLine("Select a record to check-out.");
                         string rec = Console.ReadLine();
                         if (p.SafeEntryList.Count > 0)
-                            {p.SafeEntryList[p.SafeEntryList.Count - 1].PerformCheckOut();
-                            Console.Write("You have successfully checked-out.");
-                        }  //remove person from SafeEntryList
+                        {
+                                p.SafeEntryList[^1].PerformCheckOut();        //remove person from SafeEntryList
+                                Console.Write("You have successfully checked-out.");
+                        }  
                         
                         else
                         {
