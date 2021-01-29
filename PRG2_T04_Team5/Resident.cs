@@ -64,7 +64,7 @@ namespace COVID_Monitoring_System
 
         public override string ToString()
         {
-            return "Name:  " + Name + "\tAddress: " + Address + "\tlastLeftCountry: " + LastLeftCountry.ToString("dd/MM/yyyy");
+            return "Name: " + Name + "\tAddress: " + Address + "\tLast Left Country: " + LastLeftCountry.ToString("dd/MM/yyyy");
         }
     }
 }
