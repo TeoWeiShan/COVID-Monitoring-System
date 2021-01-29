@@ -56,5 +56,9 @@ namespace COVID_Monitoring_System
             Console.WriteLine("Your token is replaced. Your serial no. is " + serialNo + "." + "Please collect it at "+collectionLocation+".");
         }
 
+        public override string ToString()
+        {
+            return "Token Serial Number: " + serialNo + "\tToken Collection Location: " + collectionLocation + "\tToken Expiry Date: " + ExpiryDate;
+        }
     }
 }
