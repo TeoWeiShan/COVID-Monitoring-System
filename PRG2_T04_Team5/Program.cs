@@ -224,6 +224,14 @@ namespace COVID_Monitoring_System
                                 te.IsPaid = Convert.ToBoolean(line[13]);
 
                                 p.AddTravelEntry(te);
+                                //Input data to Resident with Token
+                                if (line[6] != "" && line[7] != "" && line[8] != "")
+                                {
+                                    TraceTogetherToken ttt = new TraceTogetherToken(line[6], line[7], Convert.ToDateTime(line[8]));
+                                    Resident r = (Resident)p;
+                                    r.Token = ttt;
+
+                                }
 
                             }
                             personList.Add(p);
@@ -321,7 +329,7 @@ namespace COVID_Monitoring_System
                 {
                     if (p is Visitor)
                     {
-                        Console.WriteLine(p.ToString());
+                        Console.WriteLine(p);
                     }
                 }
 
@@ -334,43 +342,60 @@ namespace COVID_Monitoring_System
                 Console.Write("Enter person name: ");
                 string name = Console.ReadLine();
                 bool found = false;
+                //Search through list for person
                 foreach (Person p in personList)
                 {
-                    //Check if person exist in person list
+                    //If person exist in personList
                     if (p.Name == name)
                     {
-                        //Person exist
-                        Console.WriteLine("Person Found");
+                        Console.WriteLine("Person is found. Displaying person information: ");
                         Console.WriteLine(p);
-                        //Person don't have Travel Entry
+                        //If person does not have travel entry
                         if (p.TravelEntryList.Count == 0)
                         {
-                            Console.WriteLine("No Travel Entry Details");
+                            Console.WriteLine("No travel entry details.");
                         }
+                        //If person have travel entry
                         else
                         {
-                            //Person have Travel Entry
                             Console.WriteLine("Most recent travel entry detail: ");
                             TravelEntry last = p.TravelEntryList[p.TravelEntryList.Count - 1];
-                            Console.WriteLine(last.ToString(), "SHN Fee Paid: ", last.IsPaid);
-                            //Person stay at Facility
+                            Console.Write(last);
+                            Console.WriteLine("\tSHN End Date: " + last.SHNEndDate + "\tSHN Fee Paid: " + last.IsPaid);
+                            //If person stayed at facility
                             if (last.SHNStay != null)
                             {
                                 Console.WriteLine(last.SHNStay);
                             }
-                            //Person did not stay at Facility
+                            //If person did not stay at facility
                             else
                             {
-                                Console.WriteLine("No SHN Facility Stay Details");
+                                Console.WriteLine("No SHN stay details.");
                             }
 
+                        }
+                        //If person is Resident
+                        if (p is Resident)
+                        {
+                            Resident r = (Resident)p;
+                            //If person have token
+                            if (r.Token != null)
+                            {
+                                Console.WriteLine("Person has a token. Displaying token information: ");
+                                Console.WriteLine(r.Token);
+                            }
+                            //If person don't have token
+                            else
+                            {
+                                Console.WriteLine("No token found.");
+                            }
                         }
 
                         found = true;
                         break;
                     }
                 }
-                //Person don't exist in the list. 
+                //If person does not exist in personList
                 if (!found) Console.WriteLine("Person is not found.");
 
 
