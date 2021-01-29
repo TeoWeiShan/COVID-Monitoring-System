@@ -221,6 +221,13 @@ namespace COVID_Monitoring_System
                                 p.AddTravelEntry(te);
 
                             }
+                            if (line[6] != "" && line[7] != "" && line[8] != "")
+                            {
+                                TraceTogetherToken ttt = new TraceTogetherToken(line[6], line[7], Convert.ToDateTime(line[8]));
+                                Resident r = (Resident)p;
+                                r.Token = ttt;
+
+                            }
                             personList.Add(p);
                         }
 
@@ -316,7 +323,7 @@ namespace COVID_Monitoring_System
                 {
                     if (p is Visitor)
                     {
-                        Console.WriteLine(p.ToString());
+                        Console.WriteLine(p);
                     }
                 }
 
@@ -329,34 +336,46 @@ namespace COVID_Monitoring_System
                 Console.Write("Enter person name: ");
                 string name = Console.ReadLine();
                 bool found = false;
+                //Search through list for person
                 foreach (Person p in personList)
                 {
                     if (p.Name == name)
                     {
-                        Console.WriteLine("Person Found");
+                        Console.WriteLine("Person is found. Displaying person information: ");
                         Console.WriteLine(p);
                         if (p.TravelEntryList.Count == 0)
                         {
-                            Console.WriteLine("No Travel Entry Details");
+                            Console.WriteLine("No travel entry details.");
                         }
                         else
                         {
                             Console.WriteLine("Most recent travel entry detail: ");
                             TravelEntry last = p.TravelEntryList[p.TravelEntryList.Count - 1];
-                            Console.WriteLine(last.ToString(), "SHN Fee Paid: ", last.IsPaid);
+                            Console.Write(last);
+                            Console.WriteLine("\tSHN End Date: " + last.SHNEndDate + "\tSHN Fee Paid: " + last.IsPaid);
                             if (last.SHNStay != null)
                             {
                                 Console.WriteLine(last.SHNStay);
                             }
                             else
                             {
-                                Console.WriteLine("No SHN Facility Stay Details");
+                                Console.WriteLine("No SHN stay details.");
                             }
                             
                         }
-
-
-
+                        if(p is Resident)
+                        {
+                            Resident r = (Resident) p;
+                            if (r.Token != null)
+                            {
+                                Console.WriteLine("Perosn has a token. Displaying token information: ");
+                                Console.WriteLine(r.Token);
+                            }
+                            else
+                            {
+                                Console.WriteLine("No token found.");
+                            }
+                        }
 
                         found = true;
                         break;
@@ -370,7 +389,7 @@ namespace COVID_Monitoring_System
 
 
             //===SafeEntry/TraceTogether===
-            static void TraceTogetherToken(List<Person> personList, List<SafeEntry> safeEntryList) 
+            static void TraceTogetherToken(List<Person> personList, List<SafeEntry> safeEntryList) //incomplete
             {
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
@@ -380,16 +399,18 @@ namespace COVID_Monitoring_System
                     if (r.Name == name)
                     {
                         found = true;
-                        string serialNo = ("T"+ 12345);
-                        string newserialNo = (serialNo + 1);
+                        Console.WriteLine("Enter a unique serial no.");
+                        string serialNo = Console.ReadLine();
                         Console.WriteLine("Enter your preferred collection location.");
                         string collectionLocation = Console.ReadLine();
                         DateTime expiryDate = DateTime.Today;
-                        TraceTogetherToken t = new TraceTogetherToken(newserialNo, collectionLocation, expiryDate);
+                        TraceTogetherToken t = new TraceTogetherToken(serialNo, collectionLocation, expiryDate);
                         //add and assign token
+                        break;
 
                         //if token <= 1 month from expiry, replace token. (token expires 6 months from collection)
                     }
+
                     else if (!found) Console.WriteLine("Name not found. Please try again.");
                 }
             }
@@ -415,7 +436,7 @@ namespace COVID_Monitoring_System
                         Console.WriteLine("Enter the new max capacity: ");
                         int newmaxcap = Convert.ToInt32(Console.ReadLine());
                         b.MaximumCapacity = newmaxcap;
-                        Console.Write("Max capacity of " + bizname + "has been updated.");
+                        Console.Write("Max capacity of " + b + "has been updated.");
                         break;
                     }
                     else if (!found) Console.WriteLine("Business not found. Please try again.");
