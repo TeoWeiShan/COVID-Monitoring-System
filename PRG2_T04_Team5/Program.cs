@@ -518,7 +518,7 @@ namespace COVID_Monitoring_System
                                 {
                                     SafeEntry e = new SafeEntry(checkin, b);
                                     p.AddSafeEntry(e);                                          //add safeentry object to person
-                                    b.VisitorsNow = b.VisitorsNow + 1;                          //increase visitors count by 1 upon CheckIn
+                                    b.VisitorsNow += 1;                          //increase visitors count by 1 upon CheckIn
                                     Console.WriteLine("You have successfully checked-in.");
                                     break;
                                 }
@@ -541,16 +541,27 @@ namespace COVID_Monitoring_System
                     if (p.Name == name)
                     {
                         found = true;
+                        //bool record = false;
                         Console.WriteLine(p);
                         Console.WriteLine("Select a record to check-out.");
                         string rec = Console.ReadLine();
-                        p.SafeEntryList[p.SafeEntryList.Count - 1].PerformCheckOut();   //remove person from SafeEntryList
+                        if (p.SafeEntryList.Count > 0)
+                            {p.SafeEntryList[p.SafeEntryList.Count - 1].PerformCheckOut();
+                            Console.Write("You have successfully checked-out.");
+                        }  //remove person from SafeEntryList
+                        
+                        else
+                        {
+                            Console.WriteLine("No records found.");
+                        }
                         foreach (BusinessLocation b in businessList)
                         {
-                            b.VisitorsNow = b.VisitorsNow - 1;                          //reduce visitors count by 1 upon CheckOut
+                            b.VisitorsNow -= 1;                          //reduce visitors count by 1 upon CheckOut
+                            
                             break;
                         }
-                        Console.Write("You have successfully checked-out.");
+                        //if (!record) { }
+                        
                     }
 
                     else if (!found)
