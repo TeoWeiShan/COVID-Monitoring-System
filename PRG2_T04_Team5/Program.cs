@@ -535,7 +535,7 @@ namespace COVID_Monitoring_System
                                         break;
 
                                     }
-                                    
+
                                 }
                                 else
                                 {
@@ -566,17 +566,18 @@ namespace COVID_Monitoring_System
                                         }
                                     }
                                 }
-                                
-
-                                
-                                
 
 
-                                
+
+
+
+
+
                             }
-                        } if (!bizFound) Console.WriteLine("Business not found. Please try again.");
+                        }
+                        if (!bizFound) Console.WriteLine("Business not found. Please try again.");
                     }
-                 }
+                }
                 if (!found) Console.WriteLine("Name not found. Please try again.");    //validation - only accept names in personList 
             }
 
@@ -605,7 +606,7 @@ namespace COVID_Monitoring_System
                         string rec = Console.ReadLine();
                         foreach (SafeEntry se in p.SafeEntryList)
                         {
-                            if(se.Location.BusinessName == rec && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                            if (se.Location.BusinessName == rec && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
                             {
                                 //Remove(se.Location);
                                 //p.SafeEntryList.Remove(se);
@@ -621,18 +622,18 @@ namespace COVID_Monitoring_System
                                 Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
                                 Console.WriteLine("You have successfully checked-out.");
                                 break;
-                                    
+
                             }
                         }
-                            
-                        
+
+
                     }
 
                 }
                 if (!found)
-                    {
-                        Console.WriteLine("Invalid input. Please try again.");          //validation - person not found
-                    }
+                {
+                    Console.WriteLine("Invalid input. Please try again.");          //validation - person not found
+                }
             }
 
             //===TravelEntry===
