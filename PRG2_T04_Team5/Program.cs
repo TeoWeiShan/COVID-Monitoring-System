@@ -432,7 +432,7 @@ namespace COVID_Monitoring_System
                             if (r.Token.ExpiryDate < DateTime.Now.AddMonths(1))
                             {
                                 r.Token.IsEligibleForReplacement();
-                                Console.WriteLine("Your token is expiring soon on " + r.Token.ExpiryDate + ". Would you like to replace it?");
+                                Console.WriteLine("Your token is expiring soon on " + r.Token.ExpiryDate + ". Do you want to replace it?");
                                 Console.WriteLine("Enter 'Yes' or 'No'");
                                 string choice = Console.ReadLine();
                                 if (choice == "Yes")
@@ -450,6 +450,7 @@ namespace COVID_Monitoring_System
                                 }
                                 else if (choice == "No")
                                 {
+                                    Console.WriteLine("Token not replaced.");
                                     break;
                                 }
                                 else
@@ -457,14 +458,14 @@ namespace COVID_Monitoring_System
                                     Console.WriteLine("Invalid input. Please choose yes/no."); //validation - only accept yes/no answer
                                 }
                             }
-                            else Console.WriteLine("You can only replace your token within 1 month of its expiry.");
+                            else Console.WriteLine("Token not replaced. You can only replace your token within 1 month of its expiry.");
                         }
                     }
                     //else Console.WriteLine( "Error?");
                 }
                 if (!found)
                 {
-                    Console.WriteLine("Name not found. Please try again."); //validation - only accept person names in personList
+                    Console.WriteLine("Name not found."); //validation - only accept person names in personList
                 }
             }
 
@@ -494,7 +495,7 @@ namespace COVID_Monitoring_System
                     }
                     else if (!found)
                     {
-                        Console.WriteLine("Business not found. Please try again.");             //validation - only accept businesses in businessList
+                        Console.WriteLine("Business not found.");             //validation - only accept businesses in businessList
                         break;
                     }
                 }
@@ -647,7 +648,7 @@ namespace COVID_Monitoring_System
                         }
                     }
                 }
-                    if (!found) Console.WriteLine("Invalid input. Please try again.");          //validation - person not found
+                    if (!found) Console.WriteLine("Invalid input.");          //validation - person not found
             }
             
             //===TravelEntry===
