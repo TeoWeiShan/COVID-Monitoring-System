@@ -548,17 +548,13 @@ namespace COVID_Monitoring_System
                     {
                         found = true;
                         //bool record = false;
-                        foreach (SafeEntry entry in safeEntryList)
-                        {
-                            Console.WriteLine(entry);
-                            Console.WriteLine(p.SafeEntryList[p.SafeEntryList.Count - 1].CheckOut);
-                        }
+                        
                         for (int i = 0; i < p.SafeEntryList.Count; i++)
                         {
                             Console.WriteLine(p.SafeEntryList[i].Location);
                             Console.WriteLine("Select a record to check-out.");
                             string rec = Console.ReadLine();
-                            if (p.SafeEntryList.Count >= 0)
+                            if (p.SafeEntryList.Count > 0)
                             {
                                 p.SafeEntryList[^1].PerformCheckOut();        //remove person from SafeEntryList
                                 Console.Write("You have successfully checked-out.");
