@@ -49,7 +49,7 @@ namespace COVID_Monitoring_System
             TravelEntryList.Add(entry);
         }
 
-        public void AddSafeEntry(DateTime checkIn, SafeEntry entry)
+        public void AddSafeEntry(SafeEntry entry)
         {
             SafeEntryList.Add(entry);
         }
