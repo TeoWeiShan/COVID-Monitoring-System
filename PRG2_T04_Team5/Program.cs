@@ -670,7 +670,7 @@ namespace COVID_Monitoring_System
                 bool nameExist = false;
                 foreach (Person person in personList)
                 {
-                    Console.WriteLine(person);
+
                     if (name == person.Name)
                     {
                         Console.WriteLine("Person exists.");
@@ -691,6 +691,9 @@ namespace COVID_Monitoring_System
                     string nationality = Console.ReadLine();
                     Person p = new Visitor(name, passportNo, nationality);
                     personList.Add(p);
+                    Console.WriteLine("Vistor has been created.");
+
+                    ListVisitors(personList);
                 }
 
 
@@ -725,7 +728,7 @@ namespace COVID_Monitoring_System
                                     //Create new object
                                     TravelEntry e = new TravelEntry(lastCountry, entryMode, entryDate);
                                     e.CalculateSHNDuration();
-                                    Console.WriteLine(e.SHNEndDate);
+                                    Console.WriteLine("SHN End Date: " + e.SHNEndDate);
                                     //Prompt SHN Selection Menu if SHN Duration is 14 Days
                                     if (e.SHNEndDate == e.EntryDate.AddDays(14))
                                     {
@@ -768,7 +771,7 @@ namespace COVID_Monitoring_System
                                     }
                                     //Create travel entry for person
                                     p.AddTravelEntry(e);
-                                    Console.WriteLine(p.TravelEntryList[p.TravelEntryList.Count - 1]);
+                                    Console.WriteLine(p.TravelEntryList[p.TravelEntryList.Count - 1].ToString() + "\tSHN End Date: " + e.SHNEndDate);
                                     Console.WriteLine("Travel Entry Record Created.");
                                     break;
                                 }
@@ -814,16 +817,19 @@ namespace COVID_Monitoring_System
                                 if (p.TravelEntryList[p.TravelEntryList.Count - 1].IsPaid == false)
                                 {
                                     //Display payable
-                                    Console.Write(p.TravelEntryList[p.TravelEntryList.Count - 1].ToString());
-                                    Console.WriteLine("\tSHNEndDate: " + p.TravelEntryList[p.TravelEntryList.Count - 1].SHNEndDate);
-                                    double finalCost = p.CalculateSHNCharges() * 1.07;
-                                    Console.WriteLine("Total Payable: " + finalCost);
+                                    Console.WriteLine(p.TravelEntryList[p.TravelEntryList.Count - 1].ToString() + "\tSHNEndDate: " + p.TravelEntryList[p.TravelEntryList.Count - 1].SHNEndDate);
+
+                                    //Console.WriteLine();
+                                    double beforeCost = p.CalculateSHNCharges();
+                                    Console.WriteLine("Total payable charges (before GST): $" + Math.Round(beforeCost, 2));
+                                    double afterCost = beforeCost * 1.07;
+                                    Console.WriteLine("Total payable charges (after GST): $" + Math.Round(afterCost, 2));
                                     Console.WriteLine("Please make payment. Enter 'Y' after payment is made. Enter others to not pay for you SHN fees.");
                                     string payment = Console.ReadLine();
                                     if (payment == "Y")
                                     {
                                         p.TravelEntryList[p.TravelEntryList.Count - 1].IsPaid = true;
-                                        Console.WriteLine("SHN Charges have been paid.");
+                                        Console.WriteLine("A grand total of $" + Math.Round(afterCost, 2) + " worth of SHN Charges have been paid.");
                                     }
                                     else
                                     {
@@ -835,7 +841,7 @@ namespace COVID_Monitoring_System
                                 //If person has paid SHN Fees
                                 else if (p.TravelEntryList[p.TravelEntryList.Count - 1].IsPaid == true)
                                 {
-                                    Console.WriteLine("SHN Charges have been paid.");
+                                    Console.WriteLine("SHN Charges have been paid already.");
                                     found = true;
                                     break;
                                 }
