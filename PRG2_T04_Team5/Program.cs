@@ -502,7 +502,8 @@ namespace COVID_Monitoring_System
 
             static void SafeEntryCheckIn(List<Person> personList, List<BusinessLocation> businessList)
             {
-                while (true)
+                bool checkInBool = false;
+                while (checkInBool == false)
                 {
                     Console.WriteLine("Enter your name: ");
                     string name = Console.ReadLine();
@@ -546,6 +547,7 @@ namespace COVID_Monitoring_System
                                             b.MaximumCapacity -= 1;
                                             Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
                                             Console.WriteLine("You have successfully checked-in.");
+                                            checkInBool = true;
                                             break;
                                         }
 
@@ -572,12 +574,14 @@ namespace COVID_Monitoring_System
                                                     b.MaximumCapacity -= 1;
                                                     Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
                                                     Console.WriteLine("You have successfully checked-in.");
+                                                    checkInBool = true;
                                                     break;
                                                 }
                                             }
                                             else if (location == p.SafeEntryList[i].Location.BusinessName && p.SafeEntryList[i].CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
                                             {
                                                 Console.WriteLine("Please check out of the location first!");
+                                                checkInBool = true;
                                                 break;
                                             }
                                         }
