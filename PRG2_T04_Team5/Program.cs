@@ -406,18 +406,18 @@ namespace COVID_Monitoring_System
             static void TraceTogetherToken(List<Person> personList, List<SafeEntry> safeEntryList)
             {
                 bool found = false;
-                int serialNo = 12345;
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
                 foreach (Person p in personList)
                 {
-                    if (p.Name == name && p is Resident)                                                                    //ensure that the person is a resident as only residents have token
+                    if (p.Name == name && p is Resident)                                                               //ensure that the person is a resident
                     {
                         found = true;
                         Resident r = (Resident)p;
-                        if (r.Token is null)                                                                                //check if resident has a token
+                        if (r.Token is null)                                                                           //check if resident has a token
                         {
-                            serialNo += 1;
+                            Random rnd = new Random();
+                            int serialNo = rnd.Next(10000, 99999);
                             string newserialNo = "T" + serialNo;                                                       //generate a s/n for token
                             Console.WriteLine("Enter your preferred collection location (CCs only)");
                             string collectionLocation = Console.ReadLine();
@@ -443,8 +443,10 @@ namespace COVID_Monitoring_System
                                     r.Token.IsEligibleForReplacement();
                                     Console.WriteLine("Enter your preferred collection location (CCs only)");
                                     string collectionLocation = Console.ReadLine();
-                                    string v = Convert.ToString(serialNo);
-                                    r.Token.ReplaceToken(v, collectionLocation);
+                                    Random rnd = new Random();
+                                    int serialNo = rnd.Next(10000, 99999);
+                                    string newserialNo = "T" + serialNo;
+                                    r.Token.ReplaceToken(newserialNo, collectionLocation);
                                 }
                                 else if (choice == "No")
                                 {
