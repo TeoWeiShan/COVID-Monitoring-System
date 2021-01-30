@@ -101,7 +101,10 @@ namespace COVID_Monitoring_System
                     "10) List all SHN Facilities\n" +
                     "11) Create Visitor\n" +
                     "12) Create TravelEntry Record\n" +
-                    "13) Calculate SHN Charges\n");
+                    "13) Calculate SHN Charges\n" +
+                    "\n===Report Generation===\n" +
+                    "14) Contact Tracing Reporting\n" +
+                    "15) SHN Status Reporting\n");
                 Console.WriteLine("========================================");
                 Console.Write("Please Enter An Option: ");
                 string option = Console.ReadLine();
@@ -162,6 +165,17 @@ namespace COVID_Monitoring_System
                 {
                     CalculateSHNCharges(personList);
                 }
+
+                //===Advenced Features===
+                else if (option == "14")
+                {
+                    //Contact Tracing Reporting
+                }
+                else if (option == "15")
+                {
+                    SHNStatusReporting(personList);
+                }
+                
 
 
                 else
@@ -887,6 +901,65 @@ namespace COVID_Monitoring_System
                 }
                 //If does not person exist
                 if (!found) Console.WriteLine("Person is not found.");
+            }
+
+            //===Advenced Features===
+
+            static void ContactTracingReporting()
+            {
+
+            }
+
+            static void SHNStatusReporting(List<Person> personList)
+            {
+                while (true)
+                {
+                    try
+                    {
+                        Console.Write("Enter a date: ");
+                        DateTime dateReport = Convert.ToDateTime(Console.ReadLine());
+
+
+                        using (StreamWriter sw = new StreamWriter("SHNStatusReporting.csv", false))
+                        {
+                            sw.WriteLine("Name,SHNEndDate,FacilityName");
+                            foreach (Person p in personList)
+                            {
+                                if(p.TravelEntryList.Count != 0)
+                                {
+                                    foreach (TravelEntry te in p.TravelEntryList)
+                                    {
+                                        if( te.EntryDate <= dateReport && dateReport <= te.SHNEndDate)
+                                        {
+                                            string FName = "";
+                                            if(te.SHNStay == null)
+                                            {
+                                                FName = "NA";
+                                            }
+                                            else
+                                            {
+                                                FName = te.SHNStay.FacilityName;
+                                            }
+                                            string data = p.Name + "," + te.SHNEndDate + "," + FName;
+                                            sw.WriteLine(data);
+                                        }
+                                    }
+                                }
+                                
+                            }
+                            Console.WriteLine("Report has been generated.");
+                            break;
+                        }
+
+                    }
+                    catch (FormatException)
+                    {
+                        Console.WriteLine("Please enter in the correct format of dd/MM/yyyy.");
+                    }
+                }
+                
+
+
             }
         }
     }
