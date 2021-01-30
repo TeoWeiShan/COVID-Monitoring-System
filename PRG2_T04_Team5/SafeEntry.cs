@@ -46,9 +46,7 @@ namespace COVID_Monitoring_System
 
         public void PerformCheckOut()
         {
-            
-            bool checkOut = true;
-            bool CheckOut = checkOut;
+            CheckOut = DateTime.Now;
             
         }
 
