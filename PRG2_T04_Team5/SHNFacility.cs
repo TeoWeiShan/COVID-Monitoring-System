@@ -80,32 +80,48 @@ namespace COVID_Monitoring_System
                 || (entryDate.TimeOfDay >= (new DateTime(0001, 12, 31, 18, 0, 0)).TimeOfDay && entryDate.TimeOfDay <= (new DateTime(0001, 12, 31, 23, 59, 0)).TimeOfDay))
             {
                 surchage = 1.25;
-                Console.WriteLine("25% Surchage");
+                Console.WriteLine("25% surchage is added.");
             }
             else if(entryDate.TimeOfDay >= (new DateTime(0001, 12, 31, 0, 0, 0)).TimeOfDay && entryDate.TimeOfDay <= (new DateTime(0001, 12, 31, 5, 59, 0)).TimeOfDay)
             {
                 surchage = 1.50;
-                Console.WriteLine("50% Surchage");
+                Console.WriteLine("50% surchage is added.");
             }
 
-            double cost = 0;
+            double addCost = 0;
             if ( entryMode == "Land")
             {
-               cost = (DistFromLandCheckpoint * 0.22 + 50) * surchage;
-                return cost;
+                double baseCost = DistFromLandCheckpoint * 0.22 + 50;
+                Console.WriteLine("Transporation charges (before GST): $" + baseCost);
+                addCost = baseCost * surchage;
+                if (surchage != 1)
+                {
+                    Console.WriteLine("Final transporation charges (with surchage, before GST): $" + addCost);
+                }
+
             }
             else if (entryMode == "Sea")
             {
-                cost = (DistFromSeaCheckpoint * 0.22 + 50) * surchage;
-                return cost;
+                double baseCost = DistFromSeaCheckpoint * 0.22 + 50;
+                Console.WriteLine("Transporation charges (before GST): $" + baseCost);
+                addCost = baseCost * surchage;
+                if (surchage != 1)
+                {
+                    Console.WriteLine("Final transporation charges (with surchage, before GST): $" + addCost);
+                }
             }
             else if(entryMode == "Air")
             {
-                cost = (DistFromAirCheckpoint * 0.22 + 50) * surchage;
-                return cost;
+                double baseCost = DistFromAirCheckpoint * 0.22 + 50;
+                Console.WriteLine("Transporation charges (before GST): $" + baseCost);
+                addCost = baseCost * surchage;
+                if (surchage != 1)
+                {
+                    Console.WriteLine("Final transporation charges (with surchage, before GST): $" + addCost);
+                }
             }
 
-            return cost;
+            return addCost;
         }
 
         public bool IsAvailable()
