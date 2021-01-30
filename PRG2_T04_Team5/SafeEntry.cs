@@ -46,7 +46,8 @@ namespace COVID_Monitoring_System
 
         public void PerformCheckOut()
         {
-            CheckOut = checkOut;
+            bool checkOut = true;
+            bool CheckOut = checkOut;
         }
 
         public override string ToString()
