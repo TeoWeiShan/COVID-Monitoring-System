@@ -405,9 +405,10 @@ namespace COVID_Monitoring_System
             //===SafeEntry/TraceTogether===
             static void TraceTogetherToken(List<Person> personList, List<SafeEntry> safeEntryList)
             {
+                bool found = false;
+                int serialNo = 12345;
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
-                bool found = false;
                 foreach (Person p in personList) 
                 {
                     if (p.Name == name && p is Resident)                                                                    //ensure that the person is a resident as only residents have token
@@ -416,8 +417,8 @@ namespace COVID_Monitoring_System
                         Resident r = (Resident)p;
                         if (r.Token is null)                                                                                //check if resident has a token
                         {
-                            string serialNo = ("T" + 12345);
-                            string newserialNo = (serialNo + 1);                                                            //generate a s/n for token
+                            string newserialNo = "T" + serialNo;                                                       //generate a s/n for token
+                            serialNo += 1;
                             Console.WriteLine("Enter your preferred collection location (CCs only)");
                             string collectionLocation = Console.ReadLine();
                             Console.WriteLine("");
@@ -440,7 +441,10 @@ namespace COVID_Monitoring_System
                                 if (choice == "Yes")
                                 {
                                     r.Token.IsEligibleForReplacement();
-                                    //r.Token.ReplaceToken();
+                                    Console.WriteLine("Enter your preferred collection location (CCs only)");
+                                    string collectionLocation = Console.ReadLine();
+                                    string v = Convert.ToString(serialNo);
+                                    r.Token.ReplaceToken(v, collectionLocation);
                                 }
                                 else if (choice == "No")
                                 {

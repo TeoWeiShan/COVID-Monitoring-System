@@ -57,10 +57,11 @@ namespace COVID_Monitoring_System
             return eligibility;
         }
 
-        public void ReplaceToken(string newserialNo, string collectionLocation)
+        public void ReplaceToken(string serialNo, string collectionLocation)
         {
-            serialNo = "T" + 12345;
-            newserialNo = serialNo +1;
+            int SerialNo = 12345;
+            SerialNo += 1;
+            _ = "T" + SerialNo;
             Console.WriteLine("Enter your preferred collection location (CCs only)");
             collectionLocation = Console.ReadLine();
         }
