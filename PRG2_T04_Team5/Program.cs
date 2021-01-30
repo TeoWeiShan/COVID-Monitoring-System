@@ -502,23 +502,25 @@ namespace COVID_Monitoring_System
 
             static void SafeEntryCheckIn(List<Person> personList, List<BusinessLocation> businessList)
             {
-                bool checkInBool = false;
-                while (checkInBool == false)
+                
+                Console.WriteLine("Enter your name: ");
+                string name = Console.ReadLine();
+                bool found = false;
+                foreach (Person p in personList)
                 {
-                    Console.WriteLine("Enter your name: ");
-                    string name = Console.ReadLine();
-                    bool found = false;
-                    foreach (Person p in personList)
+                    if (p.Name == name)                                 //check if name input belongs in personList
                     {
-                        if (p.Name == name)                                 //check if name input belongs in personList
+                        found = true;
+                        foreach (BusinessLocation b in businessList)
                         {
-                            found = true;
-                            foreach (BusinessLocation b in businessList)
-                            {
-                                //display biz locations
-                                Console.WriteLine(b);
-                            }
-                            DateTime checkin = DateTime.Now;
+                            //display biz locations
+                            Console.WriteLine(b);
+                        }
+                        DateTime checkin = DateTime.Now;
+                        bool checkInBool = false;
+                        while (checkInBool == false)
+                        {
+
                             Console.WriteLine("Select business location: ");
                             string location = Console.ReadLine();
                             bool bizFound = false;
@@ -590,9 +592,11 @@ namespace COVID_Monitoring_System
                             }
                             if (!bizFound) Console.WriteLine("Business not found. Please try again.");
                         }
+                        
                     }
-                    if (!found) Console.WriteLine("Name not found. Please try again.");    //validation - only accept names in personList
                 }
+                if (!found) Console.WriteLine("Name not found.");    //validation - only accept names in personList
+                
             }
 
 
