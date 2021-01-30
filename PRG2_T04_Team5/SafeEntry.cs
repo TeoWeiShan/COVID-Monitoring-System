@@ -51,7 +51,7 @@ namespace COVID_Monitoring_System
 
         public override string ToString()
         {
-            return "check in" + CheckIn + "location" + Location;
+            return "Check In: " + CheckIn + "\tLocation: \t" + Location;
         }
 
     }
