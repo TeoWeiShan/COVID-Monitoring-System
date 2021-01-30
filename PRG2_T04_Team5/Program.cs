@@ -551,28 +551,31 @@ namespace COVID_Monitoring_System
                         foreach (SafeEntry entry in safeEntryList)
                         {
                             Console.WriteLine(entry);
+                            Console.WriteLine(p.SafeEntryList[p.SafeEntryList.Count - 1].CheckOut);
                         }
-                        Console.WriteLine(p.SafeEntryList);
-                        Console.WriteLine("Select a record to check-out.");
-                        string rec = Console.ReadLine();
-                        if (p.SafeEntryList.Count > 0)
+                        for (int i = 0; i < p.SafeEntryList.Count; i++)
                         {
-                            p.SafeEntryList[^1].PerformCheckOut();        //remove person from SafeEntryList
-                            Console.Write("You have successfully checked-out.");
+                            Console.WriteLine(p.SafeEntryList[i].Location);
+                            Console.WriteLine("Select a record to check-out.");
+                            string rec = Console.ReadLine();
+                            if (p.SafeEntryList.Count >= 0)
+                            {
+                                p.SafeEntryList[^1].PerformCheckOut();        //remove person from SafeEntryList
+                                Console.Write("You have successfully checked-out.");
+                                foreach (BusinessLocation b in businessList)
+                                {
+                                    b.VisitorsNow -= 1;                          //reduce visitors count by 1 upon CheckOut
+                                    b.MaximumCapacity += 1;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("No records found.");
+                            }
+                            
+                            //if (!record) { }
                         }
-
-                        else
-                        {
-                            Console.WriteLine("No records found.");
-                        }
-                        foreach (BusinessLocation b in businessList)
-                        {
-                            b.VisitorsNow -= 1;                          //reduce visitors count by 1 upon CheckOut
-                            b.MaximumCapacity += 1;
-                            break;
-                        }
-                        //if (!record) { }
-
                     }
 
                 }
