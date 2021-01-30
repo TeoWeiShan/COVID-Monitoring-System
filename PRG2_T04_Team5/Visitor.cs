@@ -35,30 +35,40 @@ namespace COVID_Monitoring_System
             Nationality = nationality;
         }
         
+        
+
         public override double CalculateSHNCharges()
         {
             double cost = 200;
             double addCost = 0;
             TravelEntry last = TravelEntryList[TravelEntryList.Count - 1];
             int duration = (last.SHNEndDate - last.EntryDate).Days;
-            if ( duration== 14)
+            Console.WriteLine("Swab test charges (before GST): $" + cost);
+            if (duration == 14)
             {
-                addCost = last.SHNStay.CalculateTravelCost(last.EntryMode, last.EntryDate) + 2000;
-                Console.WriteLine("14 Days");
+                double tpCost = last.SHNStay.CalculateTravelCost(last.EntryMode, last.EntryDate);
+                double SDFCost = 2000;
+                Console.WriteLine("Duration of SHN: 14 Days");
+                //Console.WriteLine("Transporation charges (before GST): $" + tpCost);
+                Console.WriteLine("SDF charge (before GST): $" + SDFCost);
+                addCost = tpCost + SDFCost;
+
             }
             else if (duration == 7)
             {
-                addCost = 80;
-                Console.WriteLine("7 Days");
+                double tpCost = 80;
+                Console.WriteLine("Duration of SHN: 7 Days");
+                Console.WriteLine("Transporation charges (before GST): $" + tpCost);
+                addCost = tpCost;
             }
             else if (duration == 0)
             {
-                addCost = 80;
-                Console.WriteLine("0 Days");
+                double tpCost = 80;
+                Console.WriteLine("Duration of SHN: 0 Days");
+                Console.WriteLine("Transporation charges (before GST): $" + tpCost);
+                addCost = tpCost;
             }
-
             return (addCost + cost);
-
         }
 
         public override string ToString()

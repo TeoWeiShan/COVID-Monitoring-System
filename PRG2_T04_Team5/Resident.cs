@@ -49,22 +49,28 @@ namespace COVID_Monitoring_System
             double addCost = 0;
             TravelEntry last = TravelEntryList[TravelEntryList.Count - 1];
             int duration = (last.SHNEndDate - last.EntryDate).Days;
+            Console.WriteLine("Swab test charges (before GST): $" + cost);
             if (duration == 14)
             {
-                Console.WriteLine("14 Days");
-                addCost = 1020;
+                double tpCost = 20;
+                double SDFCost = 1000;
+                Console.WriteLine("Duration of SHN: 14 Days");
+                Console.WriteLine("Transporation charges (before GST): $" + tpCost);
+                Console.WriteLine("SDF charge (before GST): $" + SDFCost);
+                addCost = tpCost + SDFCost;
 
             }
             else if (duration == 7)
             {
-                Console.WriteLine("7 Days");
-                addCost = 20;
+                double tpCost = 20;
+                Console.WriteLine("Duration of SHN: 7 Days");
+                Console.WriteLine("Transporation charges (before GST): $" + tpCost);
+                addCost = tpCost;
             }
             else if (duration == 0)
             {
-                Console.WriteLine("0 Days");
+                Console.WriteLine("Duration of SHN: 0 Days");
             }
-
             return (addCost + cost);
         }
 
