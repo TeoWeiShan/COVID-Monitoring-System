@@ -169,7 +169,7 @@ namespace COVID_Monitoring_System
                 //===Advenced Features===
                 else if (option == "14")
                 {
-                    //Contact Tracing Reporting
+                    ContactTracingReporting(personList);
                 }
                 else if (option == "15")
                 {
@@ -903,11 +903,71 @@ namespace COVID_Monitoring_System
                 if (!found) Console.WriteLine("Person is not found.");
             }
 
-            //===Advenced Features===
+            //===Advanced Features===
 
-            static void ContactTracingReporting()
+            static void ContactTracingReporting(List<Person> personList)
             {
+                while (true)
+                {
+                    try
+                    {
+                        Console.Write("Enter a date or a date and time: ");
+                        DateTime dateReport = Convert.ToDateTime(Console.ReadLine());
+                        Console.Write("Enter business name: ");
+                        string bizName = Console.ReadLine();
+                        foreach (Person p in personList)
+                        {
+                            foreach (SafeEntry se in p.SafeEntryList)
+                            {
+                                if (bizName == se.Location.BusinessName && se.CheckIn <= dateReport && dateReport <= se.CheckOut ||
+                                    bizName == se.Location.BusinessName && se.CheckIn <= dateReport && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                                {
+                                    Console.WriteLine("Name: " + p.Name);
+                                }
+                            }
+                            
+                        }
 
+
+
+                        using (StreamWriter sw = new StreamWriter("ContactTracingReporting.csv", false))
+                        {
+                            sw.WriteLine("Name,CheckInTime,CheckOutTime");
+                            foreach (Person p in personList)
+                            {
+                                if (p.SafeEntryList.Count != 0)
+                                {
+                                    foreach (SafeEntry se in p.SafeEntryList)
+                                    {
+                                        if (se.CheckIn <= dateReport && dateReport <= se.CheckOut||
+                                            se.CheckIn <= dateReport && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                                        {
+                                            string CheckOutTiming = "";
+                                            if (se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                                            {
+                                                CheckOutTiming = "NA";
+                                            }
+                                            else
+                                            {
+                                                CheckOutTiming = Convert.ToString(se.CheckOut);
+                                            }
+                                            string data = p.Name + "," + se.CheckIn + "," + CheckOutTiming;
+                                            sw.WriteLine(data);
+                                        }
+                                    }
+                                }
+
+                            }
+                            Console.WriteLine("Report has been generated.");
+                            break;
+                        }
+
+                    }
+                    catch (FormatException)
+                    {
+                        Console.WriteLine("Please enter in the correct format of dd/MM/yyyy or dd/MM/yyyy HH:mm:ss.");
+                    }
+                }
             }
 
             static void SHNStatusReporting(List<Person> personList)
