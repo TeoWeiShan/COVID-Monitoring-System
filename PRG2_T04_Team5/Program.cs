@@ -526,6 +526,7 @@ namespace COVID_Monitoring_System
                                     p.AddSafeEntry(entry);                           //add safeentry object to person
                                     b.VisitorsNow += 1;                          //increase visitors count by 1 upon CheckIn
                                     b.MaximumCapacity -= 1;
+                                    Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
                                     Console.WriteLine("You have successfully checked-in.");
                                     break;
                                 }
@@ -554,23 +555,20 @@ namespace COVID_Monitoring_System
                             Console.WriteLine(p.SafeEntryList[i].Location);
                             Console.WriteLine("Select a record to check-out.");
                             string rec = Console.ReadLine();
-                            if (p.SafeEntryList.Count > 0)
+
+                            foreach (BusinessLocation b in businessList)
                             {
-                                p.SafeEntryList[^1].PerformCheckOut();        //remove person from SafeEntryList
-                                Console.Write("You have successfully checked-out.");
-                                foreach (BusinessLocation b in businessList)
+                                if (b.BusinessName == rec)
                                 {
                                     b.VisitorsNow -= 1;                          //reduce visitors count by 1 upon CheckOut
                                     b.MaximumCapacity += 1;
+                                    Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
+                                    Console.WriteLine("You have successfully checked-out.");
                                     break;
+                                    
                                 }
                             }
-                            else
-                            {
-                                Console.WriteLine("No records found.");
-                            }
                             
-                            //if (!record) { }
                         }
                     }
 
