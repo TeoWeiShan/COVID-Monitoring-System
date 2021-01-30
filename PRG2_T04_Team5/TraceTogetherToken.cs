@@ -59,11 +59,8 @@ namespace COVID_Monitoring_System
 
         public void ReplaceToken(string serialNo, string collectionLocation)
         {
-            int SerialNo = 12345;
-            SerialNo += 1;
-            _ = "T" + SerialNo;
-            Console.WriteLine("Enter your preferred collection location (CCs only)");
-            collectionLocation = Console.ReadLine();
+            SerialNo = serialNo;
+            CollectionLocation = collectionLocation;
         }
 
         public override string ToString()
