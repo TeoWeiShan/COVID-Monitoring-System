@@ -266,11 +266,8 @@ namespace COVID_Monitoring_System
                     Console.WriteLine(p.ToString());
                 }
                 Console.WriteLine("\nBuisness Data: \n");
-                foreach (BusinessLocation b in businessList)
-                {
-                    Console.WriteLine(b.ToString());
-
-                }
+                ListBizLocations(businessList);
+               
 
             }
 
@@ -467,7 +464,7 @@ namespace COVID_Monitoring_System
             {
                 foreach (BusinessLocation b in businessList)
                 {
-                    Console.WriteLine(b);                                     //display biz locations
+                    Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);                                     //display biz locations
                 }
             }
 
@@ -512,26 +509,70 @@ namespace COVID_Monitoring_System
                         DateTime checkin = DateTime.Now;
                         Console.WriteLine("Select business location: ");
                         string location = Console.ReadLine();
+                        bool bizFound = false;
                         foreach (BusinessLocation b in businessList)
                         {
                             if (b.BusinessName == location)
                             {
-                                if (b.MaximumCapacity == 0)
+                                bizFound = true;
+                                if (p.SafeEntryList.Count == 0)
                                 {
-                                    Console.WriteLine("Location full. Please try again later.");
+                                    if (b.MaximumCapacity == 0)
+                                    {
+                                        Console.WriteLine("Location full. Please try again later.");
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        SafeEntry entry = new SafeEntry(checkin, b);
+                                        p.AddSafeEntry(entry);                           //add safeentry object to person
+                                        b.VisitorsNow += 1;                          //increase visitors count by 1 upon CheckIn
+                                        b.MaximumCapacity -= 1;
+                                        Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
+                                        Console.WriteLine("You have successfully checked-in.");
+                                        break;
+
+                                    }
+                                    
                                 }
                                 else
                                 {
-                                    SafeEntry entry = new SafeEntry(checkin, b);
-                                    p.AddSafeEntry(entry);                           //add safeentry object to person
-                                    b.VisitorsNow += 1;                          //increase visitors count by 1 upon CheckIn
-                                    b.MaximumCapacity -= 1;
-                                    Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
-                                    Console.WriteLine("You have successfully checked-in.");
-                                    break;
+                                    for (int i = p.SafeEntryList.Count; i-- > 0;)
+                                    {
+                                        if (location == p.SafeEntryList[i].Location.BusinessName && p.SafeEntryList[i].CheckOut != new DateTime(0001, 1, 1, 0, 0, 0))
+                                        {
+                                            if (b.MaximumCapacity == 0)
+                                            {
+                                                Console.WriteLine("Location full. Please try again later.");
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                SafeEntry entry = new SafeEntry(checkin, b);
+                                                p.AddSafeEntry(entry);                           //add safeentry object to person
+                                                b.VisitorsNow += 1;                          //increase visitors count by 1 upon CheckIn
+                                                b.MaximumCapacity -= 1;
+                                                Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
+                                                Console.WriteLine("You have successfully checked-in.");
+                                                break;
+                                            }
+                                        }
+                                        else if (location == p.SafeEntryList[i].Location.BusinessName && p.SafeEntryList[i].CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                                        {
+                                            Console.WriteLine("Please check out of the location first!");
+                                            break;
+                                        }
+                                    }
                                 }
+                                
+
+                                
+                                
+
+
+                                
                             }
-                        }
+                        } if (!bizFound) Console.WriteLine("Business not found. Please try again.");
                     }
                  }
                 if (!found) Console.WriteLine("Name not found. Please try again.");    //validation - only accept names in personList 
@@ -549,27 +590,40 @@ namespace COVID_Monitoring_System
                     {
                         found = true;
                         //bool record = false;
-                        
-                        for (int i = 0; i < p.SafeEntryList.Count; i++)
-                        {
-                            Console.WriteLine(p.SafeEntryList[i].Location);
-                            Console.WriteLine("Select a record to check-out.");
-                            string rec = Console.ReadLine();
 
-                            foreach (BusinessLocation b in businessList)
+                        foreach (SafeEntry se in p.SafeEntryList)
+                        {
+                            if (se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
                             {
-                                if (b.BusinessName == rec)
-                                {
-                                    b.VisitorsNow -= 1;                          //reduce visitors count by 1 upon CheckOut
-                                    b.MaximumCapacity += 1;
-                                    Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
-                                    Console.WriteLine("You have successfully checked-out.");
-                                    break;
-                                    
-                                }
+
+                                Console.WriteLine(se);
                             }
-                            
                         }
+                        Console.WriteLine("Select a record to check-out.");
+                        string rec = Console.ReadLine();
+                        foreach (SafeEntry se in p.SafeEntryList)
+                        {
+                            if(se.Location.BusinessName == rec && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                            {
+                                //Remove(se.Location);
+                                //p.SafeEntryList.Remove(se);
+                                se.CheckOut = DateTime.Now;
+                            }
+                        }
+                        foreach (BusinessLocation b in businessList)
+                        {
+                            if (b.BusinessName == rec)
+                            {
+                                b.VisitorsNow -= 1;                          //reduce visitors count by 1 upon CheckOut
+                                b.MaximumCapacity += 1;
+                                Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
+                                Console.WriteLine("You have successfully checked-out.");
+                                break;
+                                    
+                            }
+                        }
+                            
+                        
                     }
 
                 }
