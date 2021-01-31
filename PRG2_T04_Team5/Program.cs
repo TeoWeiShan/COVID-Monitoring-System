@@ -54,6 +54,7 @@ namespace COVID_Monitoring_System
                 }
 
             }
+
             //Force users to load person business data to ensure program can work
             bool loadedCSV = false;
             while (loadedCSV == false)
@@ -85,7 +86,6 @@ namespace COVID_Monitoring_System
             //Display menu
             while (true)
             {
-
                 Console.WriteLine("\n========================================\n" +
                     "\n===General===\n" +
 
@@ -358,8 +358,7 @@ namespace COVID_Monitoring_System
 
             static void ListPersonDetails(List<Person> personList)
             {
-                //Displays a person detail based on name search
-
+                //Displays person detail based on name search
                 Console.Write("Enter person name: ");
                 string name = Console.ReadLine();
                 bool found = false;
@@ -428,19 +427,22 @@ namespace COVID_Monitoring_System
                 bool found = false;
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
+
+                //Check if input person name is in personList and is a resident
                 foreach (Person p in personList)
                 {
-                    //Check if person name belongs in personList and is a resident
-                    if (p.Name == name && p is Resident)                                                               //ensure that the person is a resident
+                    if (p.Name == name && p is Resident)                                                               
                     {
                         found = true;
                         Resident r = (Resident)p;
-                        if (r.Token is null)                                                                           //check if resident has a token
+                        //Check if resident has a token
+                        if (r.Token is null)                                                                           
                         {
                             Random rnd = new Random();
                             int serialNo = rnd.Next(10000, 99999);
-                            string newserialNo = "T" + serialNo;                                                       //generate a s/n for token
-                            //Check if serialNo has been generated before
+                            string newserialNo = "T" + serialNo;    
+                            
+                            //Check if the s/n has been generated before
                             foreach(Person person in personList)
                             {
                                 if(person is Resident)
@@ -448,7 +450,7 @@ namespace COVID_Monitoring_System
                                     Resident res = (Resident)person;
                                     if (res.Token != null && res.Token.SerialNo == newserialNo)
                                     {
-                                        //random 5-digit s/n generator
+                                        //Generate new s/n
                                         rnd = new Random();
                                         serialNo = rnd.Next(10000, 99999);
                                         newserialNo = "T" + serialNo;
@@ -459,9 +461,9 @@ namespace COVID_Monitoring_System
                             string collectionLocation = Console.ReadLine();
                             DateTime Date = DateTime.Today;
                             DateTime expiryDate = Date.AddMonths(6);
-                            //create new token object
+                            //Create new token object
                             TraceTogetherToken t = new TraceTogetherToken(newserialNo, collectionLocation, expiryDate);
-                            //assign token to resident
+                            //Assign token to resident
                             r.Token = t;                                                                                    
                             Console.WriteLine("Displaying your new TraceTogetherToken details: ");
                             Console.WriteLine("Your TraceTogether token serial number: " + r.Token.SerialNo + "\nYour collection location: " + r.Token.CollectionLocation + "\nToken expiry date: " + r.Token.ExpiryDate);
@@ -469,24 +471,24 @@ namespace COVID_Monitoring_System
                         }
                         else
                         {
-                            //check if token is eligible for replacement
+                            //Check if token is eligible for replacement (within 1 month from expiry)
                             if (r.Token.ExpiryDate < DateTime.Now.AddMonths(1))
                             {
                                 r.Token.IsEligibleForReplacement();
-                                Console.WriteLine("Your token is expiring soon on " + r.Token.ExpiryDate + ". Do you want to replace it?");
-                                Console.WriteLine("Enter 'Yes' or 'No'");
+                                Console.WriteLine("Your token is expiring soon on " + r.Token.ExpiryDate);
+                                Console.WriteLine("Do you want to replace it? Enter 'Yes' or 'No'");
                                 string choice = Console.ReadLine();
                                 if (choice == "Yes")
                                 {
                                     Console.WriteLine("Enter your preferred collection location (CCs only)");
                                     string collectionLocation = Console.ReadLine();
-                                    //retain same token s/n (only battery of token is changed)
+                                    //Retain same token s/n (only battery of token is changed)
                                     string serialNo = r.Token.SerialNo;
                                     r.Token.ReplaceToken(serialNo, collectionLocation);
-                                    //new expiry date (6 months from now)
+                                    //Update new expiry date (6 months from now)
                                     DateTime Date = DateTime.Today;
                                     r.Token.ExpiryDate = Date.AddMonths(6);
-                                    Console.WriteLine("\nDisplaying your replaced TraceTogetherToken details: ");
+                                    Console.WriteLine("\nDisplaying your new TraceTogetherToken details: ");
                                     Console.WriteLine("Your TraceTogether token serial number: " + r.Token.SerialNo + "\nYour collection location: " + r.Token.CollectionLocation + "\nToken expiry date: " + r.Token.ExpiryDate);
                                     break;
                                 }
@@ -501,8 +503,8 @@ namespace COVID_Monitoring_System
                                     Console.WriteLine("Invalid input. Please choose yes/no.");
                                 }
                             }
-                            //not eligible for replacement msg
-                            else Console.WriteLine("Token cannot be replaced. You can only replace it within 1 month of its expiry.");
+                            //Not eligible for replacement msg
+                            else Console.WriteLine("Your token cannot be replaced. It can only be replaced within 1 month of its expiry.");
                         }
                     }
                 }
@@ -517,7 +519,7 @@ namespace COVID_Monitoring_System
             {
                 foreach (BusinessLocation b in businessList)
                 {
-                    //display biz locations and current visitor count
+                    //Display biz locations and current visitor count
                     Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
                 }
             }
@@ -527,6 +529,8 @@ namespace COVID_Monitoring_System
                 Console.WriteLine("Enter business name: ");
                 string bizname = Console.ReadLine();
                 bool found = false;
+
+                //Check if input bizname is in businessList
                 foreach (BusinessLocation b in businessList)
                 {
                     if (b.BusinessName == bizname)
@@ -538,25 +542,24 @@ namespace COVID_Monitoring_System
                             {
                                 Console.WriteLine("Enter the new max capacity: ");
                                 int newmaxcap = Convert.ToInt32(Console.ReadLine());
-                                // update biz location capacity
+                                // Update biz location capacity
                                 b.MaximumCapacity = newmaxcap;
                                 if (newmaxcap >= 0) { Console.Write("Max capacity of " + bizname + "has been updated.");
                                     break;
                                 }
-                                
+                                //User entered an integer <0
                                 else { Console.WriteLine("Error. Please enter an integer more than or equals to 0."); }
                                 
                             }
+                            //User did not enter an integer
                             catch (FormatException) { Console.WriteLine("Please enter integers only."); }
                         }
-
                     }
                 }
                 if (!found)
                 {
                     //validation - only accept businesses in businessList
                     Console.WriteLine("Business not found.");
-
                 }
             }
 
@@ -566,27 +569,29 @@ namespace COVID_Monitoring_System
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
                 bool found = false;
+                // check if person name input is in personList
                 foreach (Person p in personList)
                 {
-                    if (p.Name == name)                                 //check if name input belongs in personList
+                    if (p.Name == name)                                 
                     {
+                        //display biz locations
                         found = true;
-                        ListBizLocations(businessList); //display biz locations
+                        ListBizLocations(businessList); 
 
                         DateTime checkin = DateTime.Now;
                         bool checkInBool = false;
                         while (checkInBool == false)
                         {
-
                             Console.WriteLine("Select business location: ");
                             string location = Console.ReadLine();
                             bool bizFound = false;
                             foreach (BusinessLocation b in businessList)
                             {
-                                //find biz location
+                                //Find biz location
                                 if (b.BusinessName == location)
                                 {
                                     bizFound = true;
+                                    //Person has not checked in to bizlocation
                                     if (p.SafeEntryList.Count == 0)
                                     {
                                         if (b.MaximumCapacity == 0)
@@ -596,15 +601,16 @@ namespace COVID_Monitoring_System
                                         }
                                         else
                                         {
-                                            //create new safeentry object
+                                            //Create new safeentry object
                                             SafeEntry entry = new SafeEntry(checkin, b);
-                                            //add safeentry object to person
+                                            //Add safeentry object to person
                                             p.AddSafeEntry(entry);
-                                            //increase visitors count by 1 upon CheckIn
+                                            //Increase visitors count by 1
                                             b.VisitorsNow += 1;
-                                            // increase max capacity of bizlocation by 1
+                                            //Increase max cap of bizlocation by 1
                                             b.MaximumCapacity -= 1;
                                             Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
+                                            //Display success msg
                                             Console.WriteLine("You have successfully checked-in.");
                                             checkInBool = true;
                                             break;
@@ -616,7 +622,7 @@ namespace COVID_Monitoring_System
                                         //reverse loop
                                         for (int i = p.SafeEntryList.Count; i-- > 0;)
                                         {
-                                            //check for latest checkins 
+                                            //check for latest checkins (if person has yet to check out from bizlocation)
                                             if (location == p.SafeEntryList[i].Location.BusinessName && p.SafeEntryList[i].CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
                                             {
                                                 Console.WriteLine("Please check out of the location first!");
@@ -625,7 +631,7 @@ namespace COVID_Monitoring_System
                                             }
                                         }
                                         if (checkInBool == false)
-                                        {
+                                        { 
                                             if (b.MaximumCapacity == 0)
                                             {
                                                 Console.WriteLine("Location full. Please try again later.");
@@ -634,13 +640,14 @@ namespace COVID_Monitoring_System
                                             else
                                             {
                                                 SafeEntry entry = new SafeEntry(checkin, b);
-                                                //add safeentry object to person
+                                                //Add safeentry object to person
                                                 p.AddSafeEntry(entry);
-                                                //increase visitors count by 1 upon CheckIn
+                                                //Increase visitors count by 1
                                                 b.VisitorsNow += 1;
-                                                //decrease max capacity of bizlocation by 1
+                                                //Decrease max capacity of bizlocation by 1
                                                 b.MaximumCapacity -= 1;
                                                 Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
+                                                //Display success msg
                                                 Console.WriteLine("You have successfully checked-in.");
                                                 checkInBool = true;
                                                 break;
@@ -649,12 +656,14 @@ namespace COVID_Monitoring_System
                                     }
                                 }
                             }
+                            //validation - only accept biznames in businessList
                             if (!bizFound) Console.WriteLine("Business not found. Please try again.");
                         }
 
                     }
                 }
-                if (!found) Console.WriteLine("Name not found.");    //validation - only accept names in personList
+                //validation - only accept names in personList
+                if (!found) Console.WriteLine("Name not found.");    
 
             }
 
@@ -663,13 +672,13 @@ namespace COVID_Monitoring_System
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
                 bool found = false;
+                //Check if input person name belongs in personList
                 foreach (Person p in personList)
                 {
                     if (p.Name == name)
                     {
                         found = true;
-
-
+                        //Person has already checked out 
                         if (p.SafeEntryList.Count == 0)
                         {
                             Console.WriteLine("No SafeEntry record to checkout.");
@@ -679,16 +688,21 @@ namespace COVID_Monitoring_System
                             bool record = false;
                             foreach (SafeEntry se in p.SafeEntryList)
                             {
-                                //displays entries that have not checked out
+                                // Displays entries that have not been checked out for person 
                                 if (se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
                                 {
                                     Console.WriteLine(se.Location.ToString() + "\tVisitors Now: " + se.Location.VisitorsNow);
                                     Console.WriteLine("Check In: " + se.CheckIn);
                                     record = true;
                                 }
-
                             }
-                            if (!record) Console.WriteLine("No SafeEntry record to checkout.");
+
+                            // Person has already checked out
+                            if (!record)
+                            {
+                                Console.WriteLine("No SafeEntry record to checkout.");
+                            }
+
                             else
                             {
                                 bool checkInBool = false;
@@ -697,6 +711,7 @@ namespace COVID_Monitoring_System
                                     Console.Write("\nSelect a buisness name to check-out: ");
                                     string rec = Console.ReadLine();
 
+                                    //Check if bizname is in safeEntryList
                                     foreach (SafeEntry se in p.SafeEntryList)
                                     {
                                         if (se.Location.BusinessName == rec && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
@@ -704,16 +719,19 @@ namespace COVID_Monitoring_System
                                             se.PerformCheckOut();
                                             Console.WriteLine("Check Out: " + se.CheckOut);
                                             break;
-                                            //se.CheckOut = DateTime.Now;
                                         }
                                     }
                                     foreach (BusinessLocation b in businessList)
                                     {
+                                        //Check if bizname is in businessList
                                         if (b.BusinessName == rec)
                                         {
-                                            b.VisitorsNow -= 1;                          //reduce visitors count by 1 upon CheckOut
+                                            //Reduce visitors count by 1
+                                            b.VisitorsNow -= 1;  
+                                            //Increase max cap by 1
                                             b.MaximumCapacity += 1;
                                             Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
+                                            //Display success msg
                                             Console.WriteLine("You have successfully checked-out.");
                                             checkInBool = true;
                                             break;
@@ -721,14 +739,11 @@ namespace COVID_Monitoring_System
                                     }
                                 }
                             }
-
-
                         }
-
-
                     }
                 }
-                if (!found) Console.WriteLine("Invalid input.");          //validation - person not found
+                //validation - person not found
+                if (!found) Console.WriteLine("Invalid input.");          
             }
 
 
@@ -997,6 +1012,7 @@ namespace COVID_Monitoring_System
                             Console.Write("\nEnter business name: ");
                             string bName = Console.ReadLine();
 
+                            //Check if input bizname is in businessList
                             foreach (BusinessLocation b in businessList)
                             {
                                 //find biz location
@@ -1004,9 +1020,9 @@ namespace COVID_Monitoring_System
                                 {
                                     bizFound = true;
                                     break;
-
                                 }
                             }
+
                             if (bizFound == true)
                             {
                                 //Generate ppl list of checkin
@@ -1028,6 +1044,7 @@ namespace COVID_Monitoring_System
                                                 break;
                                             }
                                         }
+
                                         else if(option == "2")
                                         {
                                            if ((bName == se.Location.BusinessName && se.CheckIn.Date <= result.Date && result.Date <= se.CheckOut.Date) ||
@@ -1038,17 +1055,17 @@ namespace COVID_Monitoring_System
                                                 break;
                                             }
                                         }
-                                        
                                     }
                                 }
-                                //Validation - no one checked in at biz in the given datetime 
+
+                                //validation - no one checked in at bizlocation in the given datetime 
                                 if (!peopleCheck) Console.WriteLine("No people checked in.");
                             }
-                            //Validation - biz not found
+                            //validation - biz not found
                             else { Console.WriteLine("Business not found. Please try again."); }
                         }
 
-                        //inform user
+                        //Inform user
                         Console.WriteLine("\nGenerating Data...");
 
                         //Write data to csv
@@ -1059,7 +1076,7 @@ namespace COVID_Monitoring_System
                             {
                                 if (p.SafeEntryList.Count != 0)
                                 {
-                                    //Check if data fulfils criteria then write data
+                                    //Check if data fulfils criteria before writing data
                                     foreach (SafeEntry se in p.SafeEntryList)
                                     {
                                         if(option == "1" || option == "3")
@@ -1103,13 +1120,13 @@ namespace COVID_Monitoring_System
                                 }
 
                             }
+                            //Display succcess msg
                             Console.WriteLine("Report has been generated.");
                             break;
                         }
-
-
                     }
-                    //Validation: inform users of invalid input
+
+                    //validation - inform users of invalid input
                     catch (FormatException)
                     {
                         Console.WriteLine("Invalid input. Please follow the format of {0}. Please re-enter all options.\n", format);
