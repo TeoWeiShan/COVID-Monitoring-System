@@ -236,7 +236,17 @@ namespace COVID_Monitoring_System
                                 TravelEntry te = new TravelEntry(line[9], line[10], Convert.ToDateTime(line[11]));
                                 te.SHNEndDate = Convert.ToDateTime(line[12]);
                                 te.IsPaid = Convert.ToBoolean(line[13]);
-
+                                //Input data to Person staying at SHN
+                                if (line[14] != "")
+                                {
+                                    foreach (SHNFacility f in SHNFacilityList)
+                                    {
+                                        if (f.FacilityName == line[14])
+                                        {
+                                            te.AssignSHNFacility(new SHNFacility(f.FacilityName, f.FacilityCapacity, f.DistFromAirCheckpoint, f.DistFromSeaCheckpoint, f.DistFromLandCheckpoint)); ;
+                                        }
+                                    }
+                                }
                                 p.AddTravelEntry(te);
                                 //Input data to Resident with Token
                                 if (line[6] != "" && line[7] != "" && line[8] != "")
