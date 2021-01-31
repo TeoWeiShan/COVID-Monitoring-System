@@ -169,13 +169,13 @@ namespace COVID_Monitoring_System
                 //===Advenced Features===
                 else if (option == "14")
                 {
-                    ContactTracingReporting(personList);
+                    ContactTracingReporting(personList, businessList);
                 }
                 else if (option == "15")
                 {
                     SHNStatusReporting(personList);
                 }
-                
+
 
 
                 else
@@ -517,7 +517,7 @@ namespace COVID_Monitoring_System
 
             static void SafeEntryCheckIn(List<Person> personList, List<BusinessLocation> businessList)
             {
-                
+
                 Console.WriteLine("Enter your name: ");
                 string name = Console.ReadLine();
                 bool found = false;
@@ -527,7 +527,7 @@ namespace COVID_Monitoring_System
                     {
                         found = true;
                         ListBizLocations(businessList); //display biz locations
-                        
+
                         DateTime checkin = DateTime.Now;
                         bool checkInBool = false;
                         while (checkInBool == false)
@@ -606,11 +606,11 @@ namespace COVID_Monitoring_System
                             }
                             if (!bizFound) Console.WriteLine("Business not found. Please try again.");
                         }
-                        
+
                     }
                 }
                 if (!found) Console.WriteLine("Name not found.");    //validation - only accept names in personList
-                
+
             }
 
 
@@ -624,7 +624,7 @@ namespace COVID_Monitoring_System
                     if (p.Name == name)
                     {
                         found = true;
-                        
+
 
                         if (p.SafeEntryList.Count == 0)
                         {
@@ -642,7 +642,7 @@ namespace COVID_Monitoring_System
                                     Console.WriteLine("Check In: " + se.CheckIn);
                                     record = true;
                                 }
-                                
+
                             }
                             if (!record) Console.WriteLine("No SafeEntry record to checkout.");
                             else
@@ -677,16 +677,16 @@ namespace COVID_Monitoring_System
                                     }
                                 }
                             }
-                            
+
 
                         }
-                        
+
 
                     }
                 }
-                    if (!found) Console.WriteLine("Invalid input.");          //validation - person not found
+                if (!found) Console.WriteLine("Invalid input.");          //validation - person not found
             }
-            
+
             //===TravelEntry===
             static void ListAllSHNFacilities(List<SHNFacility> SHNFacilityList)
             {
@@ -905,7 +905,7 @@ namespace COVID_Monitoring_System
 
             //===Advanced Features===
 
-            static void ContactTracingReporting(List<Person> personList)
+            static void ContactTracingReporting(List<Person> personList, List<BusinessLocation> businessList)
             {
                 while (true)
                 {
@@ -913,56 +913,72 @@ namespace COVID_Monitoring_System
                     {
                         Console.Write("Enter a date or a date and time: ");
                         DateTime dateReport = Convert.ToDateTime(Console.ReadLine());
-                        Console.Write("Enter business name: ");
-                        string bizName = Console.ReadLine();
-                        foreach (Person p in personList)
+                        bool ctrBool = false;
+                        while (ctrBool == false)
                         {
-                            foreach (SafeEntry se in p.SafeEntryList)
+                            Console.Write("Enter business name: ");
+                            string bName = Console.ReadLine();
+                            bool bizFound = false;
+                            foreach (BusinessLocation b in businessList)
                             {
-                                if (bizName == se.Location.BusinessName && se.CheckIn <= dateReport && dateReport <= se.CheckOut ||
-                                    bizName == se.Location.BusinessName && se.CheckIn <= dateReport && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                                //find biz location
+                                if (b.BusinessName == bName)
                                 {
-                                    Console.WriteLine("Name: " + p.Name);
-                                }
-                            }
-                            
-                        }
-
-
-
-                        using (StreamWriter sw = new StreamWriter("ContactTracingReporting.csv", false))
-                        {
-                            sw.WriteLine("Name,CheckInTime,CheckOutTime");
-                            foreach (Person p in personList)
-                            {
-                                if (p.SafeEntryList.Count != 0)
-                                {
-                                    foreach (SafeEntry se in p.SafeEntryList)
+                                    bizFound = true;
+                                    foreach (Person p in personList)
                                     {
-                                        if (se.CheckIn <= dateReport && dateReport <= se.CheckOut||
-                                            se.CheckIn <= dateReport && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                                        foreach (SafeEntry se in p.SafeEntryList)
                                         {
-                                            string CheckOutTiming = "";
-                                            if (se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                                            if (bName == se.Location.BusinessName && se.CheckIn <= dateReport && dateReport <= se.CheckOut ||
+                                                bName == se.Location.BusinessName && se.CheckIn <= dateReport && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
                                             {
-                                                CheckOutTiming = "NA";
+                                                Console.WriteLine("Name: " + p.Name);
+                                                bizFound = true;
+                                                ctrBool = true;
+                                                break;
                                             }
-                                            else
-                                            {
-                                                CheckOutTiming = Convert.ToString(se.CheckOut);
-                                            }
-                                            string data = p.Name + "," + se.CheckIn + "," + CheckOutTiming;
-                                            sw.WriteLine(data);
                                         }
                                     }
                                 }
-
                             }
-                            Console.WriteLine("Report has been generated.");
-                            break;
+
+                            if (!bizFound) { Console.WriteLine("Business not found. Please try again."); }
                         }
 
-                    }
+                                using (StreamWriter sw = new StreamWriter("ContactTracingReporting.csv", false))
+                                {
+                                    sw.WriteLine("Name,CheckInTime,CheckOutTime");
+                                    foreach (Person p in personList)
+                                    {
+                                        if (p.SafeEntryList.Count != 0)
+                                        {
+                                            foreach (SafeEntry se in p.SafeEntryList)
+                                            {
+                                                if (se.CheckIn <= dateReport && dateReport <= se.CheckOut ||
+                                                    se.CheckIn <= dateReport && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                                                {
+                                                    string CheckOutTiming = "";
+                                                    if (se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                                                    {
+                                                        CheckOutTiming = "NA";
+                                                    }
+                                                    else
+                                                    {
+                                                        CheckOutTiming = Convert.ToString(se.CheckOut);
+                                                    }
+                                                    string data = p.Name + "," + se.CheckIn + "," + CheckOutTiming;
+                                                    sw.WriteLine(data);
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                    Console.WriteLine("Report has been generated.");
+                                    break;
+                                }
+
+
+                            }
                     catch (FormatException)
                     {
                         Console.WriteLine("Please enter in the correct format of dd/MM/yyyy or dd/MM/yyyy HH:mm:ss.");
@@ -985,14 +1001,14 @@ namespace COVID_Monitoring_System
                             sw.WriteLine("Name,SHNEndDate,FacilityName");
                             foreach (Person p in personList)
                             {
-                                if(p.TravelEntryList.Count != 0)
+                                if (p.TravelEntryList.Count != 0)
                                 {
                                     foreach (TravelEntry te in p.TravelEntryList)
                                     {
-                                        if( te.EntryDate <= dateReport && dateReport <= te.SHNEndDate)
+                                        if (te.EntryDate <= dateReport && dateReport <= te.SHNEndDate)
                                         {
                                             string FName = "";
-                                            if(te.SHNStay == null)
+                                            if (te.SHNStay == null)
                                             {
                                                 FName = "NA";
                                             }
@@ -1005,7 +1021,7 @@ namespace COVID_Monitoring_System
                                         }
                                     }
                                 }
-                                
+
                             }
                             Console.WriteLine("Report has been generated.");
                             break;
@@ -1017,7 +1033,7 @@ namespace COVID_Monitoring_System
                         Console.WriteLine("Please enter in the correct format of dd/MM/yyyy.");
                     }
                 }
-                
+
 
 
             }
