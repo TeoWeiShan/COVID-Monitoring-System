@@ -420,6 +420,7 @@ namespace COVID_Monitoring_System
                 string name = Console.ReadLine();
                 foreach (Person p in personList)
                 {
+                    //Check if person name belongs in personList and is a resident
                     if (p.Name == name && p is Resident)                                                               //ensure that the person is a resident
                     {
                         found = true;
@@ -437,28 +438,28 @@ namespace COVID_Monitoring_System
                                     Resident res = (Resident)person;
                                     if (res.Token != null && res.Token.SerialNo == newserialNo)
                                     {
-
-                                        
+                                        //random 5-digit s/n generator
                                         rnd = new Random();
                                         serialNo = rnd.Next(10000, 99999);
                                         newserialNo = "T" + serialNo;
                                     }
                                 }
-                                
                             }
                             Console.WriteLine("Enter your preferred collection location (CCs only)");
                             string collectionLocation = Console.ReadLine();
-                            Console.WriteLine("");
                             DateTime Date = DateTime.Today;
                             DateTime expiryDate = Date.AddMonths(6);
-                            TraceTogetherToken t = new TraceTogetherToken(newserialNo, collectionLocation, expiryDate);     //create new token object
-                            r.Token = t;                                                                                    //assign token to resident
+                            //create new token object
+                            TraceTogetherToken t = new TraceTogetherToken(newserialNo, collectionLocation, expiryDate);
+                            //assign token to resident
+                            r.Token = t;                                                                                    
                             Console.WriteLine("Displaying your new TraceTogetherToken details: ");
                             Console.WriteLine("Your TraceTogether token serial number: " + r.Token.SerialNo + "\nYour collection location: " + r.Token.CollectionLocation + "\nToken expiry date: " + r.Token.ExpiryDate);
                             break;
                         }
                         else
                         {
+                            //check if token is eligible for replacement
                             if (r.Token.ExpiryDate < DateTime.Now.AddMonths(1))
                             {
                                 r.Token.IsEligibleForReplacement();
@@ -469,8 +470,10 @@ namespace COVID_Monitoring_System
                                 {
                                     Console.WriteLine("Enter your preferred collection location (CCs only)");
                                     string collectionLocation = Console.ReadLine();
+                                    //retain same token s/n (only battery of token is changed)
                                     string serialNo = r.Token.SerialNo;
                                     r.Token.ReplaceToken(serialNo, collectionLocation);
+                                    //new expiry date (6 months from now)
                                     DateTime Date = DateTime.Today;
                                     r.Token.ExpiryDate = Date.AddMonths(6);
                                     Console.WriteLine("\nDisplaying your replaced TraceTogetherToken details: ");
@@ -484,17 +487,19 @@ namespace COVID_Monitoring_System
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Invalid input. Please choose yes/no."); //validation - only accept yes/no answer
+                                    //validation - only accept yes/no answer
+                                    Console.WriteLine("Invalid input. Please choose yes/no.");
                                 }
                             }
-                            else Console.WriteLine("Token cannot replaced. You can only replace your token within 1 month of its expiry.");
+                            //not eligible for replacement msg
+                            else Console.WriteLine("Token cannot be replaced. You can only replace it within 1 month of its expiry.");
                         }
                     }
-                    //else Console.WriteLine( "Error?");
                 }
                 if (!found)
                 {
-                    Console.WriteLine("Name not found."); //validation - only accept person names in personList
+                    //validation - only accept person names in personList
+                    Console.WriteLine("Name not found."); 
                 }
             }
 
