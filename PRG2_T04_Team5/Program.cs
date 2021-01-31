@@ -408,7 +408,7 @@ namespace COVID_Monitoring_System
                 }
                 //If person does not exist in personList
                 if (!found) Console.WriteLine("Person is not found.");
-                
+
             }
 
 
@@ -487,7 +487,7 @@ namespace COVID_Monitoring_System
                 foreach (BusinessLocation b in businessList)
                 {
                     //display biz locations
-                    Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);                                     
+                    Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
                 }
             }
 
@@ -501,19 +501,31 @@ namespace COVID_Monitoring_System
                     if (b.BusinessName == bizname)
                     {
                         found = true;
-                        Console.WriteLine("Enter the new max capacity: ");
-                        int newmaxcap = Convert.ToInt32(Console.ReadLine());
-                        // update biz location capacity
-                        b.MaximumCapacity = newmaxcap;                                          
-                        Console.Write("Max capacity of " + bizname + "has been updated.");
-                        break;
+                        while (true)
+                        {
+                            try
+                            {
+                                Console.WriteLine("Enter the new max capacity: ");
+                                int newmaxcap = Convert.ToInt32(Console.ReadLine());
+                                // update biz location capacity
+                                b.MaximumCapacity = newmaxcap;
+                                if (newmaxcap >= 0) { Console.Write("Max capacity of " + bizname + "has been updated.");
+                                    break;
+                                }
+                                
+                                else { Console.WriteLine("Error. Please enter an integer more than or equals to 0."); }
+                                
+                            }
+                            catch (FormatException) { Console.WriteLine("Please enter integers only."); }
+                        }
+
                     }
-                    else if (!found)
-                    {
-                        //validation - only accept businesses in businessList
-                        Console.WriteLine("Business not found.");             
-                        break;
-                    }
+                }
+                if (!found)
+                {
+                    //validation - only accept businesses in businessList
+                    Console.WriteLine("Business not found.");
+
                 }
             }
 
@@ -920,7 +932,7 @@ namespace COVID_Monitoring_System
                         {
                             Console.Write("Enter business name: ");
                             string bName = Console.ReadLine();
-                            
+
                             foreach (BusinessLocation b in businessList)
                             {
                                 //find biz location
@@ -929,7 +941,7 @@ namespace COVID_Monitoring_System
                                 {
                                     bizFound = true;
                                     break;
-                                    
+
                                 }
                             }
                             if (bizFound == true)
@@ -947,46 +959,47 @@ namespace COVID_Monitoring_System
                                         }
                                     }
                                 }
-                            }else { Console.WriteLine("Business not found. Please try again."); }
+                            }
+                            else { Console.WriteLine("Business not found. Please try again."); }
                         }
-                        
-                        
+
+
                         Console.WriteLine("Writing Data");
 
-                                using (StreamWriter sw = new StreamWriter("ContactTracingReporting.csv", false))
+                        using (StreamWriter sw = new StreamWriter("ContactTracingReporting.csv", false))
+                        {
+                            sw.WriteLine("Name,CheckInTime,CheckOutTime");
+                            foreach (Person p in personList)
+                            {
+                                if (p.SafeEntryList.Count != 0)
                                 {
-                                    sw.WriteLine("Name,CheckInTime,CheckOutTime");
-                                    foreach (Person p in personList)
+                                    foreach (SafeEntry se in p.SafeEntryList)
                                     {
-                                        if (p.SafeEntryList.Count != 0)
+                                        if (se.CheckIn <= dateReport && dateReport <= se.CheckOut ||
+                                            se.CheckIn <= dateReport && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
                                         {
-                                            foreach (SafeEntry se in p.SafeEntryList)
+                                            string CheckOutTiming = "";
+                                            if (se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
                                             {
-                                                if (se.CheckIn <= dateReport && dateReport <= se.CheckOut ||
-                                                    se.CheckIn <= dateReport && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
-                                                {
-                                                    string CheckOutTiming = "";
-                                                    if (se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
-                                                    {
-                                                        CheckOutTiming = "NA";
-                                                    }
-                                                    else
-                                                    {
-                                                        CheckOutTiming = Convert.ToString(se.CheckOut);
-                                                    }
-                                                    string data = p.Name + "," + se.CheckIn + "," + CheckOutTiming;
-                                                    sw.WriteLine(data);
-                                                }
+                                                CheckOutTiming = "NA";
                                             }
+                                            else
+                                            {
+                                                CheckOutTiming = Convert.ToString(se.CheckOut);
+                                            }
+                                            string data = p.Name + "," + se.CheckIn + "," + CheckOutTiming;
+                                            sw.WriteLine(data);
                                         }
-
                                     }
-                                    Console.WriteLine("Report has been generated.");
-                                    break;
                                 }
 
-
                             }
+                            Console.WriteLine("Report has been generated.");
+                            break;
+                        }
+
+
+                    }
                     catch (FormatException)
                     {
                         Console.WriteLine("Please enter in the correct format of dd/MM/yyyy or dd/MM/yyyy HH:mm:ss.");
