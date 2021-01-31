@@ -430,6 +430,23 @@ namespace COVID_Monitoring_System
                             Random rnd = new Random();
                             int serialNo = rnd.Next(10000, 99999);
                             string newserialNo = "T" + serialNo;                                                       //generate a s/n for token
+                            //Check if serialNo has been generated before
+                            foreach(Person person in personList)
+                            {
+                                if(person is Resident)
+                                {
+                                    Resident res = (Resident)person;
+                                    if (res.Token != null && res.Token.SerialNo == newserialNo)
+                                    {
+
+                                        
+                                        rnd = new Random();
+                                        serialNo = rnd.Next(10000, 99999);
+                                        newserialNo = "T" + serialNo;
+                                    }
+                                }
+                                
+                            }
                             Console.WriteLine("Enter your preferred collection location (CCs only)");
                             string collectionLocation = Console.ReadLine();
                             Console.WriteLine("");
@@ -437,8 +454,8 @@ namespace COVID_Monitoring_System
                             DateTime expiryDate = Date.AddMonths(6);
                             TraceTogetherToken t = new TraceTogetherToken(newserialNo, collectionLocation, expiryDate);     //create new token object
                             r.Token = t;                                                                                    //assign token to resident
-                            Console.WriteLine("Your TraceTogether token s/n: " + newserialNo + "\nYour collection location: " + collectionLocation + "\nToken expiry date: " + expiryDate);
-                            Console.WriteLine("Display " + r.Token.SerialNo + " " + r.Token.CollectionLocation + " " + r.Token.ExpiryDate);
+                            Console.WriteLine("Displaying your new TraceTogetherToken details: ");
+                            Console.WriteLine("Your TraceTogether token serial number: " + r.Token.SerialNo + "\nYour collection location: " + r.Token.CollectionLocation + "\nToken expiry date: " + r.Token.ExpiryDate);
                             break;
                         }
                         else
@@ -457,9 +474,8 @@ namespace COVID_Monitoring_System
                                     r.Token.ReplaceToken(serialNo, collectionLocation);
                                     DateTime Date = DateTime.Today;
                                     r.Token.ExpiryDate = Date.AddMonths(6);
-                                    Console.WriteLine("Your token has been replaced. \nCollection Location: " + collectionLocation);
-                                    Console.WriteLine("S/N: " + r.Token.SerialNo);
-                                    Console.WriteLine("Expiry date: " + r.Token.ExpiryDate);
+                                    Console.WriteLine("\nDisplaying your replaced TraceTogetherToken details: ");
+                                    Console.WriteLine("Your TraceTogether token serial number: " + r.Token.SerialNo + "\nYour collection location: " + r.Token.CollectionLocation + "\nToken expiry date: " + r.Token.ExpiryDate);
                                     break;
                                 }
                                 else if (choice == "No")
@@ -472,7 +488,7 @@ namespace COVID_Monitoring_System
                                     Console.WriteLine("Invalid input. Please choose yes/no."); //validation - only accept yes/no answer
                                 }
                             }
-                            else Console.WriteLine("Token not replaced. You can only replace your token within 1 month of its expiry.");
+                            else Console.WriteLine("Token cannot replaced. You can only replace your token within 1 month of its expiry.");
                         }
                     }
                     //else Console.WriteLine( "Error?");
