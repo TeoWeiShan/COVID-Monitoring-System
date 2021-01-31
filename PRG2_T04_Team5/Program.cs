@@ -957,12 +957,11 @@ namespace COVID_Monitoring_System
             }
 
             //===Advanced Features===
-
             static void ContactTracingReporting(List<Person> personList, List<BusinessLocation> businessList)
             {
                 while (true)
                 {
-                    //Check date time format user want
+                    //Check the date time format that user wants
                     string dateString, format;
                     Console.Write(
                         "1)Time (HH:mm:ss)\n" +
@@ -990,14 +989,12 @@ namespace COVID_Monitoring_System
 
                     DateTime result;
                     CultureInfo provider = CultureInfo.InvariantCulture;
-
                     try
                     {
                         //Enter date/time to check
                         Console.Write("Enter date/time: ");
                         dateString = Console.ReadLine();
                         result = DateTime.ParseExact(dateString, format, provider);
-
 
                         bool bizFound = false;
                         while (bizFound == false)
@@ -1020,10 +1017,10 @@ namespace COVID_Monitoring_System
                                 Console.WriteLine("\nList of people checked in: ");
                                 foreach (Person p in personList)
                                 {
-                                    //Check through everyone safeentry
+                                    //Check through everyone's safeentry
                                     foreach (SafeEntry se in p.SafeEntryList)
                                     {
-                                        //Display name if checkin to business with given datetime
+                                        //Display name if checkin to business is in given datetime
                                         if (option == "1" || option == "3")
                                         {
                                             if ((bName == se.Location.BusinessName && se.CheckIn <= result && result <= se.CheckOut) ||
@@ -1046,13 +1043,14 @@ namespace COVID_Monitoring_System
                                         }
                                     }
                                 }
-                                //Validation: no ppl check in at biz with datetime given
+                                //Validation - no one checked in at biz in the given datetime 
                                 if (!peopleCheck) Console.WriteLine("No people checked in.");
                             }
-                            //Validation : biz not found.
+                            //Validation - biz not found
                             else { Console.WriteLine("Business not found. Please try again."); }
                         }
 
+                        //inform user
                         Console.WriteLine("\nGenerating Data...");
 
                         //Write data to csv
@@ -1063,7 +1061,7 @@ namespace COVID_Monitoring_System
                             {
                                 if (p.SafeEntryList.Count != 0)
                                 {
-                                    //Check data fulfil criteria then write data
+                                    //Check if data fulfils criteria then write data
                                     foreach (SafeEntry se in p.SafeEntryList)
                                     {
                                         if(option == "1" || option == "3")
@@ -1111,7 +1109,7 @@ namespace COVID_Monitoring_System
                         }
 
                     }
-                    //Validation: infomr users wrong input
+                    //Validation: inform users of invalid input
                     catch (FormatException)
                     {
                         Console.WriteLine("Invalid input. Please follow the format of {0}. Please re-enter all options.\n", format);
