@@ -49,7 +49,6 @@ namespace COVID_Monitoring_System
                 double tpCost = last.SHNStay.CalculateTravelCost(last.EntryMode, last.EntryDate);
                 double SDFCost = 2000;
                 Console.WriteLine("Duration of SHN: 14 Days");
-                //Console.WriteLine("Transporation charges (before GST): $" + tpCost);
                 Console.WriteLine("SDF charge (before GST): $" + SDFCost);
                 addCost = tpCost + SDFCost;
 
