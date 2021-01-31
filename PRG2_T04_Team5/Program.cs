@@ -517,7 +517,7 @@ namespace COVID_Monitoring_System
             {
                 foreach (BusinessLocation b in businessList)
                 {
-                    //display biz locations
+                    //display biz locations and current visitor count
                     Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);
                 }
             }
