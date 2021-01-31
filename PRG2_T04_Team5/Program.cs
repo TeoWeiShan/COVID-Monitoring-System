@@ -408,8 +408,7 @@ namespace COVID_Monitoring_System
                 }
                 //If person does not exist in personList
                 if (!found) Console.WriteLine("Person is not found.");
-
-
+                
             }
 
 
@@ -503,7 +502,8 @@ namespace COVID_Monitoring_System
             {
                 foreach (BusinessLocation b in businessList)
                 {
-                    Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);                                     //display biz locations
+                    //display biz locations
+                    Console.WriteLine(b.ToString() + "\tVisitors Now: " + b.VisitorsNow);                                     
                 }
             }
 
@@ -519,13 +519,15 @@ namespace COVID_Monitoring_System
                         found = true;
                         Console.WriteLine("Enter the new max capacity: ");
                         int newmaxcap = Convert.ToInt32(Console.ReadLine());
-                        b.MaximumCapacity = newmaxcap;                                          //update biz location capacity
+                        // update biz location capacity
+                        b.MaximumCapacity = newmaxcap;                                          
                         Console.Write("Max capacity of " + bizname + "has been updated.");
                         break;
                     }
                     else if (!found)
                     {
-                        Console.WriteLine("Business not found.");             //validation - only accept businesses in businessList
+                        //validation - only accept businesses in businessList
+                        Console.WriteLine("Business not found.");             
                         break;
                     }
                 }
