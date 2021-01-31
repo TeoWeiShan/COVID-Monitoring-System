@@ -915,37 +915,43 @@ namespace COVID_Monitoring_System
                     {
                         Console.Write("Enter a date or a date and time: ");
                         DateTime dateReport = Convert.ToDateTime(Console.ReadLine());
-                        bool ctrBool = false;
-                        while (ctrBool == false)
+                        bool bizFound = false;
+                        while (bizFound == false)
                         {
                             Console.Write("Enter business name: ");
                             string bName = Console.ReadLine();
-                            bool bizFound = false;
+                            
                             foreach (BusinessLocation b in businessList)
                             {
                                 //find biz location
+                                Console.WriteLine("Hey");
                                 if (b.BusinessName == bName)
                                 {
                                     bizFound = true;
-                                    foreach (Person p in personList)
+                                    break;
+                                    
+                                }
+                            }
+                            if (bizFound == true)
+                            {
+                                foreach (Person p in personList)
+                                {
+                                    foreach (SafeEntry se in p.SafeEntryList)
                                     {
-                                        foreach (SafeEntry se in p.SafeEntryList)
+                                        if (bName == se.Location.BusinessName && se.CheckIn <= dateReport && dateReport <= se.CheckOut ||
+                                            bName == se.Location.BusinessName && se.CheckIn <= dateReport && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
                                         {
-                                            if (bName == se.Location.BusinessName && se.CheckIn <= dateReport && dateReport <= se.CheckOut ||
-                                                bName == se.Location.BusinessName && se.CheckIn <= dateReport && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
-                                            {
-                                                Console.WriteLine("Name: " + p.Name);
-                                                bizFound = true;
-                                                ctrBool = true;
-                                                break;
-                                            }
+                                            Console.WriteLine("Name: " + p.Name);
+                                            bizFound = true;
+                                            break;
                                         }
                                     }
                                 }
-                            }
-
-                            if (!bizFound) { Console.WriteLine("Business not found. Please try again."); }
+                            }else { Console.WriteLine("Business not found. Please try again."); }
                         }
+                        
+                        
+                        Console.WriteLine("Writing Data");
 
                                 using (StreamWriter sw = new StreamWriter("ContactTracingReporting.csv", false))
                                 {
