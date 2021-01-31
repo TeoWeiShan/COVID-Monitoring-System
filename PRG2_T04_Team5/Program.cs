@@ -25,7 +25,6 @@ namespace COVID_Monitoring_System
             List<SafeEntry> safeEntryList = new List<SafeEntry>();
 
 
-
             //Force users to load facility API to ensure program can work
             bool loadedAPI = false;
             while (loadedAPI == false)
@@ -643,7 +642,6 @@ namespace COVID_Monitoring_System
 
             }
 
-
             static void SafeEntryCheckOut(List<Person> personList, List<SafeEntry> safeEntryList, List<BusinessLocation> businessList)
             {
                 Console.WriteLine("Enter your name: ");
@@ -716,6 +714,7 @@ namespace COVID_Monitoring_System
                 }
                 if (!found) Console.WriteLine("Invalid input.");          //validation - person not found
             }
+
 
             //===TravelEntry===
             static void ListAllSHNFacilities(List<SHNFacility> SHNFacilityList)
@@ -979,7 +978,6 @@ namespace COVID_Monitoring_System
                             else { Console.WriteLine("Business not found. Please try again."); }
                         }
 
-
                         Console.WriteLine("Writing Data");
 
                         using (StreamWriter sw = new StreamWriter("ContactTracingReporting.csv", false))
@@ -1008,13 +1006,10 @@ namespace COVID_Monitoring_System
                                         }
                                     }
                                 }
-
                             }
                             Console.WriteLine("Report has been generated.");
                             break;
                         }
-
-
                     }
                     catch (FormatException)
                     {
@@ -1031,7 +1026,6 @@ namespace COVID_Monitoring_System
                     {
                         Console.Write("Enter a date: ");
                         DateTime dateReport = Convert.ToDateTime(Console.ReadLine());
-
 
                         using (StreamWriter sw = new StreamWriter("SHNStatusReporting.csv", false))
                         {
@@ -1058,21 +1052,16 @@ namespace COVID_Monitoring_System
                                         }
                                     }
                                 }
-
                             }
                             Console.WriteLine("Report has been generated.");
                             break;
                         }
-
                     }
                     catch (FormatException)
                     {
                         Console.WriteLine("Please enter in the correct format of dd/MM/yyyy.");
                     }
                 }
-
-
-
             }
         }
     }
