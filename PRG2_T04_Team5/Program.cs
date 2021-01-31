@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -789,6 +790,7 @@ namespace COVID_Monitoring_System
                                 //Validate accepted forms of entry
                                 if (entryMode == "Air" || entryMode == "Land" || entryMode == "Sea")
                                 {
+                                    Console.WriteLine("Entry date part for missing information will be defaulted to today's date / midnight if you do not follow the format.");
                                     Console.Write("Enter entry date (dd/MM/yyyy HH:mm:ss) : ");
                                     DateTime entryDate = Convert.ToDateTime(Console.ReadLine());
                                     //Create new object
@@ -939,20 +941,50 @@ namespace COVID_Monitoring_System
             {
                 while (true)
                 {
+                    string dateString, format;
+                    Console.Write(
+                        "1)Time (HH:mm:ss)\n" +
+                        "2)Date (dd/MM/yyyy)\n" +
+                        "3)Date and Time (dd/MM/yyyy HH:mm:ss)\n" +
+                        "Select datetime format to enter: ");
+                    string option = Console.ReadLine();
+                    if (option == "1")
+                    {
+                        format = "HH:mm:ss";
+                    }
+                    else if (option == "2")
+                    {
+                        format = "dd/MM/yyyy";
+                    }
+                    else if (option == "3")
+                    {
+                        format = "dd/MM/yyyy HH:mm:ss";
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid option.");
+                        continue;
+                    }
+
+                    DateTime result;
+                    CultureInfo provider = CultureInfo.InvariantCulture;
+
+
                     try
                     {
-                        Console.Write("Enter a date or a date and time: ");
-                        DateTime dateReport = Convert.ToDateTime(Console.ReadLine());
+                        Console.Write("Enter duration: ");
+                        dateString = Console.ReadLine();
+                        result = DateTime.ParseExact(dateString, format, provider);
+
                         bool bizFound = false;
                         while (bizFound == false)
                         {
-                            Console.Write("Enter business name: ");
+                            Console.Write("\nEnter business name: ");
                             string bName = Console.ReadLine();
 
                             foreach (BusinessLocation b in businessList)
                             {
                                 //find biz location
-                                Console.WriteLine("Hey");
                                 if (b.BusinessName == bName)
                                 {
                                     bizFound = true;
@@ -962,25 +994,42 @@ namespace COVID_Monitoring_System
                             }
                             if (bizFound == true)
                             {
+                                bool peopleCheck = false;
+                                Console.WriteLine("\nList of people checked in: ");
                                 foreach (Person p in personList)
                                 {
                                     foreach (SafeEntry se in p.SafeEntryList)
                                     {
-                                        if (bName == se.Location.BusinessName && se.CheckIn <= dateReport && dateReport <= se.CheckOut ||
-                                            bName == se.Location.BusinessName && se.CheckIn <= dateReport && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                                        if (option == "1" || option == "3")
                                         {
-                                            Console.WriteLine("Name: " + p.Name);
-                                            bizFound = true;
-                                            break;
+                                            if ((bName == se.Location.BusinessName && se.CheckIn <= result && result <= se.CheckOut) ||
+                                           (bName == se.Location.BusinessName && se.CheckIn <= result && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0)))
+                                            {
+                                                Console.WriteLine("Name: " + p.Name);
+                                                peopleCheck = true;
+                                                break;
+                                            }
                                         }
+                                        else if(option == "2")
+                                        {
+                                           if ((bName == se.Location.BusinessName && se.CheckIn.Date <= result.Date && result.Date <= se.CheckOut.Date) ||
+                                           (bName == se.Location.BusinessName && se.CheckIn.Date <= result.Date && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0)))
+                                            {
+                                                Console.WriteLine("Name: " + p.Name);
+                                                peopleCheck = true;
+                                                break;
+                                            }
+                                        }
+                                        
                                     }
                                 }
+                                if (!peopleCheck) Console.WriteLine("No people checked in.");
                             }
                             else { Console.WriteLine("Business not found. Please try again."); }
                         }
 
 
-                        Console.WriteLine("Writing Data");
+                        Console.WriteLine("\nGenerating Data...");
 
                         using (StreamWriter sw = new StreamWriter("ContactTracingReporting.csv", false))
                         {
@@ -991,20 +1040,42 @@ namespace COVID_Monitoring_System
                                 {
                                     foreach (SafeEntry se in p.SafeEntryList)
                                     {
-                                        if (se.CheckIn <= dateReport && dateReport <= se.CheckOut ||
-                                            se.CheckIn <= dateReport && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                                        if(option == "1" || option == "3")
                                         {
-                                            string CheckOutTiming = "";
-                                            if (se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                                            if (se.CheckIn <= result && result <= se.CheckOut ||
+                                            se.CheckIn <= result && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
                                             {
-                                                CheckOutTiming = "NA";
+                                                string CheckOutTiming = "";
+                                                if (se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                                                {
+                                                    CheckOutTiming = "NA";
+                                                }
+                                                else
+                                                {
+                                                    CheckOutTiming = Convert.ToString(se.CheckOut);
+                                                }
+                                                string data = p.Name + "," + se.CheckIn + "," + CheckOutTiming;
+                                                sw.WriteLine(data);
                                             }
-                                            else
+                                            
+                                        }
+                                        else if (option == "2")
+                                        {
+                                            if (se.CheckIn.Date <= result.Date && result.Date <= se.CheckOut.Date ||
+                                            se.CheckIn.Date <= result.Date && se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
                                             {
-                                                CheckOutTiming = Convert.ToString(se.CheckOut);
+                                                string CheckOutTiming = "";
+                                                if (se.CheckOut == new DateTime(0001, 1, 1, 0, 0, 0))
+                                                {
+                                                    CheckOutTiming = "NA";
+                                                }
+                                                else
+                                                {
+                                                    CheckOutTiming = Convert.ToString(se.CheckOut);
+                                                }
+                                                string data = p.Name + "," + se.CheckIn + "," + CheckOutTiming;
+                                                sw.WriteLine(data);
                                             }
-                                            string data = p.Name + "," + se.CheckIn + "," + CheckOutTiming;
-                                            sw.WriteLine(data);
                                         }
                                     }
                                 }
@@ -1013,12 +1084,12 @@ namespace COVID_Monitoring_System
                             Console.WriteLine("Report has been generated.");
                             break;
                         }
-
+                        
 
                     }
                     catch (FormatException)
                     {
-                        Console.WriteLine("Please enter in the correct format of dd/MM/yyyy or dd/MM/yyyy HH:mm:ss.");
+                        Console.WriteLine("Invalid input. Please follow the format of {0}. Please re-enter all options.\n", format);
                     }
                 }
             }
@@ -1026,13 +1097,18 @@ namespace COVID_Monitoring_System
             static void SHNStatusReporting(List<Person> personList)
             {
                 while (true)
-                {
+            {
+                    Console.Write("Enter a date in dd/MM/yyyy: ");
+                    string dateReportString = Console.ReadLine();
+
+                    string format;
+                    DateTime dateReport;
+                    CultureInfo provider = CultureInfo.InvariantCulture;
+
+                    format = "dd/MM/yyyy";
                     try
                     {
-                        Console.Write("Enter a date: ");
-                        DateTime dateReport = Convert.ToDateTime(Console.ReadLine());
-
-
+                        dateReport = DateTime.ParseExact(dateReportString, format, provider);
                         using (StreamWriter sw = new StreamWriter("SHNStatusReporting.csv", false))
                         {
                             sw.WriteLine("Name,SHNEndDate,FacilityName");
@@ -1042,12 +1118,12 @@ namespace COVID_Monitoring_System
                                 {
                                     foreach (TravelEntry te in p.TravelEntryList)
                                     {
-                                        if (te.EntryDate <= dateReport && dateReport <= te.SHNEndDate)
+                                        if (te.EntryDate.Date <= dateReport && dateReport <= te.SHNEndDate.Date)
                                         {
                                             string FName = "";
                                             if (te.SHNStay == null)
                                             {
-                                                FName = "NA";
+                                                FName = "";
                                             }
                                             else
                                             {
@@ -1063,12 +1139,16 @@ namespace COVID_Monitoring_System
                             Console.WriteLine("Report has been generated.");
                             break;
                         }
-
                     }
                     catch (FormatException)
                     {
-                        Console.WriteLine("Please enter in the correct format of dd/MM/yyyy.");
+                        Console.WriteLine("Invalid input. Please type in the format of dd/MM/yyyy.");
                     }
+
+
+                        
+
+                    
                 }
 
 
